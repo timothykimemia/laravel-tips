@@ -66,8 +66,9 @@ class PostsController extends Controller
     {
         $this->authorize('add-post');
 
-        $tags = Tag::pluck('name', 'id');
-        $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
+        $tags = Tag::pluck('name', 'id')->toArray();
+        $categories = Category::orderBy('id', 'desc')->pluck('name', 'id')->toArray();
+
         return view('backend.posts.create', compact('categories', 'tags'));
     }
 
@@ -82,7 +83,7 @@ class PostsController extends Controller
             'comment_able'  => 'required',
             'category_id'   => 'required',
             'images.*'      => 'nullable|mimes:jpg,jpeg,png,gif|max:20000',
-            'tags.*'        => 'required',
+            'tags'        => 'required',
         ]);
         if($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -103,7 +104,7 @@ class PostsController extends Controller
                 $filename = $post->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
                 $file_size = $file->getSize();
                 $file_type = $file->getMimeType();
-                $path = public_path('assets/posts/' . $filename);
+                $path = storage_path('app/public/assets/posts/' . $filename);
                 Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($path, 100);
@@ -195,7 +196,7 @@ class PostsController extends Controller
                     $filename = $post->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
                     $file_size = $file->getSize();
                     $file_type = $file->getMimeType();
-                    $path = public_path('assets/posts/' . $filename);
+                    $path = storage_path('app/public/assets/posts/' . $filename);
                     Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
                         $constraint->aspectRatio();
                     })->save($path, 100);

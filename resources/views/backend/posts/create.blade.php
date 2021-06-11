@@ -17,75 +17,86 @@
             </div>
         </div>
         <div class="card-body">
-
-            {!! Form::open(['route' => 'admin.posts.store', 'method' => 'post', 'files' => true]) !!}
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        {!! Form::label('title', 'Title') !!}
-                        {!! Form::text('title', old('title'), ['class' => 'form-control']) !!}
-                        @error('title')<span class="text-danger">{{ $message }}</span>@enderror
+            <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input id="title" name="title" type="text" value="{{ old('title') }}" class="form-control">
+                            @error('title')<span class="text-danger">{{ $message }}</span>@enderror
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        {!! Form::label('description', 'Description') !!}
-                        {!! Form::textarea('description', old('description'), ['class' => 'form-control summernote']) !!}
-                        @error('description')<span class="text-danger">{{ $message }}</span>@enderror
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description"
+                                      class="form-control summernote">{{ old('title') }}</textarea>
+                            @error('description')<span class="text-danger">{{ $message }}</span>@enderror
+                        </div>
                     </div>
                 </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        {!! Form::label('tags', 'Tags') !!}
-                        <button type="button" class="btn btn-primary btn-xs" id="select_btn_tag">Select all</button>
-                        <button type="button" class="btn btn-primary btn-xs" id="deselect_btn_tag">Deselect all</button>
-                        {!! Form::select('tags[]', $tags->toArray() ,old('tags'), ['class' => 'form-control selects', 'multiple' => 'multiple' , 'id' => 'select_all_tags']) !!}
-                        @error('tags')<span class="text-danger">{{ $message }}</span>@enderror
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="select_all_tags">Tags</label>
+                            <button type="button" class="btn btn-primary btn-sm" id="select_btn_tag">Select all</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="deselect_btn_tag">Deselect all</button>
+                            <select name="tags[]" id="select_all_tags" multiple class="form-control selects">
+                                @foreach($tags as $index => $tag)
+                                    <option value="{{ $index }}">{{ $tag }}</option>
+                                @endforeach
+                            </select>
+                            @error('tags')<span class="text-danger">{{ $message }}</span>@enderror
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-4">
-                    {!! Form::label('category_id', 'category_id') !!}
-                    {!! Form::select('category_id', ['' => '---'] + $categories->toArray(), old('category_id'), ['class' => 'form-control']) !!}
-                    @error('category_id')<span class="text-danger">{{ $message }}</span>@enderror
-                </div>
-                <div class="col-4">
-                    {!! Form::label('comment_able', 'comment_able') !!}
-                    {!! Form::select('comment_able', ['1' => 'Yes', '0' => 'No'], old('comment_able'), ['class' => 'form-control']) !!}
-                    @error('comment_able')<span class="text-danger">{{ $message }}</span>@enderror
-                </div>
-                <div class="col-4">
-                    {!! Form::label('status', 'status') !!}
-                    {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], old('status'), ['class' => 'form-control']) !!}
-                    @error('status')<span class="text-danger">{{ $message }}</span>@enderror
-                </div>
-            </div>
-
-            <div class="row pt-4">
-                <div class="col-12">
-                    {!! Form::label('Sliders', 'images') !!}
-                    <br>
-                    <div class="file-loading">
-                        {!! Form::file('images[]', ['id' => 'post-images', 'class' => 'file-input-overview', 'multiple' => 'multiple']) !!}
-                        <span class="form-text text-muted">Image width should be 800px x 500px</span>
-                        @error('images')<span class="text-danger">{{ $message }}</span>@enderror
+                <div class="row">
+                    <div class="col-4">
+                        <label for="category_id">Category</label>
+                        <select id="category_id" name="category_id" class="form-control">
+                            <option value="">----</option>
+                            @foreach($categories as $index => $category)
+                                <option value="{{ $index }}">{{ $category }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')<span class="text-danger">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="col-4">
+                        <label for="comment_able">Commentable</label>
+                        <select id="comment_able" name="comment_able" class="form-control"
+                                value="{{ old('comment_able') }}">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        @error('comment_able')<span class="text-danger">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="col-4">
+                        <label for="status">Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="1">Action</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                        @error('status')<span class="text-danger">{{ $message }}</span>@enderror
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group pt-4">
-                {!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
-            </div>
-            {!! Form::close() !!}
+                <div class="row pt-4">
+                    <div class="col-12">
+                        <label for="sliders">Images</label>
+                        <br>
+                        <div class="file-loading">
+                            <input type="file" name="images[]" id="post-images" class="file-input-overview" multiple>
+                            <span class="form-text text-muted">Image width should be 800px x 500px</span>
+                            @error('images')<span class="text-danger">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group pt-4">
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                </div>
+            </form>
         </div>
     </div>
 
@@ -112,12 +123,12 @@
                 tags: true,
                 minimumResultsForSearch: Infinity
             });
-            $('#select_btn_tag').click(function (){
+            $('#select_btn_tag').click(function () {
                 $('#select_all_tags > option').prop("selected", "selected");
                 $('#select_all_tags').trigger('change');
             });
 
-            $('#deselect_btn_tag').click(function (){
+            $('#deselect_btn_tag').click(function () {
                 $('#select_all_tags > option').prop("selected", "");
                 $('#select_all_tags').trigger('change');
             });
@@ -134,3 +145,4 @@
         });
     </script>
 @endsection
+

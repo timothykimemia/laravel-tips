@@ -43,7 +43,7 @@
                                 @if($post->media->count() > 0)
                                     @foreach($post->media as $media)
                                         <div class="col-2">
-                                            <img class="img-fluid" src="{{ asset('storage/assets/posts/' . $post->media->file_name) }}" alt="{{ $post->title }}">
+                                            <img class="img-fluid" src="{{ asset('storage/assets/posts/' . $media->file_name) }}" alt="{{ $post->title }}">
                                         </div>
                                     @endforeach
                                 @else
