@@ -18,7 +18,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
     Route::get('/login',                            [BackendLoginController::class, 'showLoginForm'])->name('show_login_form');
     Route::post('login',                            [BackendLoginController::class, 'login'])->name('login');
     Route::post('logout',                           [BackendLoginController::class, 'logout'])->name('logout');
-    Route::group(['middleware' => ['roles', 'role:admin|editor']], function() {
+    Route::group(['middleware' => ['auth']], function() {
 
         Route::any('/notifications/get',            [BackendNotificationsController::class, 'getNotifications']);
         Route::any('/notifications/read',           [BackendNotificationsController::class, 'markAsRead']);

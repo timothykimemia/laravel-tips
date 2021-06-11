@@ -22,7 +22,6 @@
         "laravel/ui": "^3.0",
         "laravelcollective/html": "^6.1",
         "livewire/livewire": "^2.2",
-        "mindscms/entrust": "^v2.0",
         "nicolaslopezj/searchable": "^1.13",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "~4.0",

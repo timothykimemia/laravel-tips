@@ -24,7 +24,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         @foreach($global_categories as $global_category)
                             <a class="dropdown-item"
-                               href="{{ route('frontend.logout') }}">{{ $global_category->name }}</a>
+                               href="{{ route('frontend.category.posts', $global_category->slug) }}">{{ $global_category->name }}</a>
                         @endforeach
                         <form id="logout-form" action="{{ route('frontend.logout') }}" method="POST"
                               style="display: none;">

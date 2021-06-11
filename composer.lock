@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "772cb2c27a86d556da535788395b537d",
+    "content-hash": "09c0681f415eab1d3503011bf964b5f7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2275,70 +2275,6 @@
                 }
             ],
             "time": "2021-04-28T15:31:15+00:00"
-        },
-        {
-            "name": "mindscms/entrust",
-            "version": "v2.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mindscms/entrust.git",
-                "reference": "eefa0fcc4a2ac2f94ad2857ef15c467c50a5462c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mindscms/entrust/zipball/eefa0fcc4a2ac2f94ad2857ef15c467c50a5462c",
-                "reference": "eefa0fcc4a2ac2f94ad2857ef15c467c50a5462c",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/cache": ">=6.0",
-                "illuminate/console": ">=6.0",
-                "illuminate/support": ">=6.0",
-                "php": ">=7.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Mindscms\\Entrust\\EntrustServiceProvider"
-                    ],
-                    "aliases": {
-                        "Entrust": "Mindscms\\Entrust\\EntrustFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/commands"
-                ],
-                "psr-4": {
-                    "Mindscms\\Entrust\\": "src/Entrust/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sami Mansour",
-                    "email": "mindscms@gmail.com"
-                }
-            ],
-            "description": "This package provides a flexible way to add Role-based Permissions to Laravel Customized by Sami Mansour",
-            "keywords": [
-                "acl",
-                "auth",
-                "illuminate",
-                "laravel",
-                "permission",
-                "roles"
-            ],
-            "support": {
-                "issues": "https://github.com/mindscms/entrust/issues",
-                "source": "https://github.com/mindscms/entrust/tree/v2.5.2"
-            },
-            "time": "2021-02-25T23:06:22+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -9087,16 +9023,16 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "5.0.2",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "a90ccbddffa067b51f574dea6eb25d5680839455"
+                "reference": "23bd5951f7ff26f12d4e3242864df3e08dec4e49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/a90ccbddffa067b51f574dea6eb25d5680839455",
-                "reference": "a90ccbddffa067b51f574dea6eb25d5680839455",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/23bd5951f7ff26f12d4e3242864df3e08dec4e49",
+                "reference": "23bd5951f7ff26f12d4e3242864df3e08dec4e49",
                 "shasum": ""
             },
             "require": {
@@ -9139,7 +9075,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/global-state/issues",
-                "source": "https://github.com/sebastianbergmann/global-state/tree/5.0.2"
+                "source": "https://github.com/sebastianbergmann/global-state/tree/5.0.3"
             },
             "funding": [
                 {
@@ -9147,7 +9083,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-26T15:55:19+00:00"
+            "time": "2021-06-11T13:31:12+00:00"
         },
         {
             "name": "sebastian/lines-of-code",

@@ -11,7 +11,7 @@
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
-        @if(auth()->user()->ability('admin', 'manage_supervisors,show_supervisors'))
+        @if(auth()->user()->isAdmin()))
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.supervisors.index') }}">
                 Supervisors
@@ -19,7 +19,7 @@
         </li>
         @endif
 
-        @if(auth()->user()->ability('admin', 'manage_settings,show_settings'))
+        @if(auth()->user()->isAdmin())
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.settings.index') }}">
                 Settings
@@ -38,9 +38,9 @@
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
                 @if (auth()->user()->user_image != '')
-                    <img class="img-profile rounded-circle" src="{{ asset('assets/users/' . auth()->user()->user_image) }}">
+                    <img class="img-profile rounded-circle" src="{{ asset('storage/assets/users/' . auth()->user()->user_image) }}">
                 @else
-                    <img class="img-profile rounded-circle" src="{{ asset('assets/users/default.png') }}">
+                    <img class="img-profile rounded-circle" src="{{ asset('frontend/images/default.jpg') }}">
                 @endif
             </a>
             <!-- Dropdown - User Information -->

@@ -63,12 +63,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
-        'roles' => \App\Http\Middleware\CheckRole::class,
-
-        'role' => \Mindscms\Entrust\Middleware\EntrustRole::class,
-        'permission' => \Mindscms\Entrust\Middleware\EntrustPermission::class,
-        'ability' => \Mindscms\Entrust\Middleware\EntrustAbility::class,
+        'Admin' => \App\Http\Middleware\Admin::class,
+        'Editor' => \App\Http\Middleware\Editor::class,
     ];
 
 }

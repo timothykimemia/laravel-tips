@@ -19,7 +19,7 @@ class PostsController extends Controller
 
     public function __construct()
     {
-        if (\auth()->check()){
+        if (auth()->check()){
             $this->middleware('auth');
         } else {
             return view('backend.auth.login');
@@ -28,9 +28,7 @@ class PostsController extends Controller
 
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_posts,show_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-post');
 
         $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
         $categoryId = (isset(\request()->category_id) && \request()->category_id != '') ? \request()->category_id : null;
@@ -66,9 +64,7 @@ class PostsController extends Controller
 
     public function create()
     {
-        if (!\auth()->user()->ability('admin', 'create_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-post');
 
         $tags = Tag::pluck('name', 'id');
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
@@ -77,9 +73,7 @@ class PostsController extends Controller
 
     public function store(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'create_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-post');
 
         $validator = Validator::make($request->all(), [
             'title'         => 'required',
@@ -149,9 +143,7 @@ class PostsController extends Controller
 
     public function show($id)
     {
-        if (!\auth()->user()->ability('admin', 'display_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-post');
 
         $post = Post::with(['media', 'category', 'user', 'comments'])->whereId($id)->wherePostType('post')->first();
         return view('backend.posts.show', compact('post'));
@@ -159,9 +151,8 @@ class PostsController extends Controller
 
     public function edit($id)
     {
-        if (!\auth()->user()->ability('admin', 'update_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-post');
+
         $tags = Tag::pluck('name', 'id');
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
         $post = Post::with(['media'])->whereId($id)->wherePostType('post')->first();
@@ -171,9 +162,7 @@ class PostsController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!\auth()->user()->ability('admin', 'update_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-post');
 
         $validator = Validator::make($request->all(), [
             'title'         => 'required',
@@ -248,9 +237,7 @@ class PostsController extends Controller
 
     public function destroy($id)
     {
-        if (!\auth()->user()->ability('admin', 'delete_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-post');
 
         $post = Post::whereId($id)->wherePostType('post')->first();
 
@@ -278,9 +265,7 @@ class PostsController extends Controller
 
     public function removeImage(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'delete_posts')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-post');
 
         $media = PostMedia::whereId($request->media_id)->first();
         if ($media) {

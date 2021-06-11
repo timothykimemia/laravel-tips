@@ -112,17 +112,14 @@ class ViewServiceProvider extends ServiceProvider
 
         if (request()->is('admin/*')) {
             view()->composer('*', function ($view) {
-            /*********************Admin Side Menu**************************/
-                if (!Cache::has('admin_side_menu')) {
-                    Cache::forever('admin_side_menu', Permission::tree());
-                }
+            // Admin sidebar
                 $admin_side_menu = Cache::get('admin_side_menu');
 
                 $view->with([
                     'admin_side_menu' => $admin_side_menu,
                 ]);
             });
-            /*********************End Admin Side Menu**************************/
+
         }
 
     }

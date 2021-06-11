@@ -15,10 +15,10 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         Category::create(['name' => 'General', 'status' => 1]);
-        Category::create(['name' => 'Apache', 'status' => 1]);
-        Category::create(['name' => 'Nginx', 'status' => 1]);
-        Category::create(['name' => 'Design', 'status' => 1]);
-        Category::create(['name' => 'Programing', 'status' => 1]);
+        Category::create(['name' => 'PHP', 'status' => 1]);
+        Category::create(['name' => 'Laravel', 'status' => 1]);
+        Category::create(['name' => 'JavaScript', 'status' => 1]);
+        Category::create(['name' => 'VueJs', 'status' => 1]);
 
     }
 }

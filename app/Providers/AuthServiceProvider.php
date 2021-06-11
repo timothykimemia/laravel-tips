@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Permission;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
@@ -26,6 +28,17 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        try {
+            Permission::get(['name', 'message'])->map(function ($permission) {
+                Gate::define($permission->name, function ($user) use ($permission) {
+                    return $user->hasAllow($permission->name)
+                        ? Response::allow()
+                        : Response::deny($permission->message);
+                });
+            });
+        }
+        catch (\Exception $e) {
+            return [];
+        }
     }
 }

@@ -6,12 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Mindscms\Entrust\Traits\EntrustUserWithPermissionsTrait;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, EntrustUserWithPermissionsTrait, SearchableTrait;
+    use HasFactory, Notifiable, SearchableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -73,5 +72,25 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->user_image != '' ? asset('assets/users/' .$this->user_image) : asset('assets/users/default.png');
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 
+    public function isAdmin()
+    {
+        return $this->role_id == Role::IS_ADMIN;
+    }
+
+    public function isEditor()
+    {
+        return $this->role_id == Role::IS_EDITOR;
+    }
+
+    public function hasAllow($permission)
+    {
+        $role = $this->role()->first();
+
+        return $role->permissions()->whereName($permission)->first() ? true : false;
+    }
 }
