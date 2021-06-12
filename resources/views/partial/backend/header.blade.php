@@ -6,12 +6,9 @@
         <i class="fa fa-bars"></i>
     </button>
 
-
-
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
-
-        @if(auth()->user()->isAdmin()))
+        @if(auth()->user()->isAdmin())
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.supervisors.index') }}">
                 Supervisors
@@ -26,7 +23,6 @@
             </a>
         </li>
         @endif
-
         <div class="topbar-divider d-none d-sm-block"></div>
 
         <admin-notification></admin-notification>
@@ -59,8 +55,6 @@
                 </form>
             </div>
         </li>
-
     </ul>
-
 </nav>
 <!-- End of Topbar -->

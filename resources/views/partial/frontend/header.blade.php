@@ -15,13 +15,14 @@
                 <li class="nav-link"><a href="{{ route('users.post.create') }}">Create Post</a></li>
                 <li class="nav-link"><a href="{{ route('frontend.posts.show', 'about-us') }}">About Us</a></li>
                 <li class="nav-link"><a href="{{ route('frontend.posts.show', 'our-vision') }}">Our Vision</a></li>
-                <li class="nav-link"><a href="{{ route('frontend.contact') }}">Contact Us</a></li>
+                <li class="nav-link"><a href="{{ route('frontend.contacts.create') }}">Contact Us</a></li>
+
                 <li class="nav-item dropdown">
                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Categories <span class="caret"></span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         @foreach($global_categories as $global_category)
                             <a class="dropdown-item"
                                href="{{ route('frontend.category.posts', $global_category->slug) }}">{{ $global_category->name }}</a>
@@ -53,7 +54,7 @@
                             {{ auth()->user()->name }} <span class="caret"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('users.dashboard') }}">My Dashboard</a>
+                            <a class="dropdown-item" href="{{ auth()->user()->isAdmin() ? route('admin.index') : route('users.dashboard')}}">Dashboard</a>
                             <a class="dropdown-item" href="{{ route('frontend.logout') }}"
                                onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

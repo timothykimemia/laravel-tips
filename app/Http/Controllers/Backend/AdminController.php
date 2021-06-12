@@ -8,20 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-
-    public function __construct()
+    public function index()
     {
         if (!Auth::check()) {
             return redirect()->route('admin.show_login_form');
         }
-    }
 
-    public function index()
-    {
-        if (Auth::check()) {
-            return view('backend.index');
-        }
-        return redirect()->route('admin.show_login_form');
+        return view('backend.index');
     }
 
 }

@@ -32,10 +32,10 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         if (!request()->is('admin/*')) {
-            Paginator::defaultView('vendor.pagination.boighor');
+            Paginator::defaultView('vendor.pagination.simple-tailwind');
 
             view()->composer('*', function ($view) {
-                /*********************Recent Posts**************************/
+                // Recent Posts
                 if (!Cache::has('recent_posts')) {
                     $recent_posts = Post::with(['category', 'media', 'user'])
                         ->whereHas('category', function ($query) {
@@ -51,9 +51,8 @@ class ViewServiceProvider extends ServiceProvider
                     });
                 }
                 $recent_posts = Cache::get('recent_posts');
-                /*********************End Recent Posts**************************/
 
-                /*********************Recent Comments**************************/
+                // Recent Comments
                 if (!Cache::has('recent_comments')) {
                     $recent_comments = Comment::whereStatus(1)->orderBy('id', 'desc')->limit(5)->get();
 
@@ -62,9 +61,8 @@ class ViewServiceProvider extends ServiceProvider
                     });
                 }
                 $recent_comments = Cache::get('recent_comments');
-                /*********************End Recent Comments**************************/
 
-                /*********************Global Categories**************************/
+                // Global Categories
                 if (!Cache::has('global_categories')) {
                     $global_categories = Category::whereStatus(1)->orderBy('id', 'desc')->get();
 
@@ -73,9 +71,8 @@ class ViewServiceProvider extends ServiceProvider
                     });
                 }
                 $global_categories = Cache::get('global_categories');
-                /*********************End Global Categories**************************/
 
-                /*********************Global Tags**************************/
+                // Global Tags
                 if (!Cache::has('global_tags')) {
                     $global_tags = Tag::withCount('posts')->get();
 
@@ -84,9 +81,8 @@ class ViewServiceProvider extends ServiceProvider
                     });
                 }
                 $global_tags = Cache::get('global_tags');
-                /*********************End Global Tags**************************/
 
-                /*********************Global Archives**************************/
+                // Global Archives
                 if (!Cache::has('global_archives')) {
                     $global_archives = Post::whereStatus(1)->orderBy('created_at', 'desc')
                         ->select(DB::raw("Year(created_at) as year"), DB::raw("Month(created_at) as month"))
@@ -97,7 +93,6 @@ class ViewServiceProvider extends ServiceProvider
                     });
                 }
                 $global_archives = Cache::get('global_archives');
-                /*********************End Global Archives**************************/
 
                 $view->with([
                     'recent_posts' => $recent_posts,
@@ -114,7 +109,6 @@ class ViewServiceProvider extends ServiceProvider
             view()->composer('*', function ($view) {
             // Admin sidebar
                 $admin_side_menu = Cache::get('admin_side_menu');
-
                 $view->with([
                     'admin_side_menu' => $admin_side_menu,
                 ]);

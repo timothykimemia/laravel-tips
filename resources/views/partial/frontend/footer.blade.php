@@ -23,7 +23,7 @@
                                 <li><a href="{{ route('frontend.index') }}">Home</a></li>
                                 <li><a href="{{ route('frontend.index') }}">Trending</a></li>
                                 <li><a href="{{ route('frontend.index') }}">All Post</a></li>
-                                <li><a href="{{ route('frontend.contact') }}">Contact</a></li>
+                                <li><a href="{{ route('frontend.contacts.create') }}">Contact</a></li>
                             </ul>
                         </div>
                     </div>

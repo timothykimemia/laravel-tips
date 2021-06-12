@@ -64,5 +64,10 @@ class PermissionsTableSeeder extends Seeder
         DB::table('permissions')->insert(['name' => 'edit-setting', 'description' => 'edit setting', 'message' => 'Forbidden']);
         DB::table('permissions')->insert(['name' => 'delete-setting', 'description' => 'delete setting', 'message' => 'Forbidden']);
 
+        DB::table('permissions')->insert(['name' => 'view-supervisor', 'description' => 'view supervisor', 'message' => 'Forbidden']);
+        DB::table('permissions')->insert(['name' => 'add-supervisor', 'description' => 'add supervisor', 'message' => 'Forbidden']);
+        DB::table('permissions')->insert(['name' => 'edit-supervisor', 'description' => 'edit supervisor', 'message' => 'Forbidden']);
+        DB::table('permissions')->insert(['name' => 'delete-supervisor', 'description' => 'delete supervisor', 'message' => 'Forbidden']);
+
     }
 }

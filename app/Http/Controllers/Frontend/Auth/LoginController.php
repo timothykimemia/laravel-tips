@@ -86,7 +86,7 @@ class LoginController extends Controller
         }
 
         return redirect()->route('frontend.index')->with([
-            'message' => 'Please contact Bloggi Admin.',
+            'message' => 'Please contact Administrator.',
             'alert-type' => 'warning'
         ]);
 
@@ -127,7 +127,7 @@ class LoginController extends Controller
 
         if ($user->user_image == '') {
             $filename = '' . $user->username .'.jpg';
-            $path = public_path('/assets/users/' . $filename);
+            $path = storage_path('app/storage/assets/users/' . $filename);
             Image::make($avatar)->save($path, 100);
             $user->update(['user_image' => $filename]);
         }

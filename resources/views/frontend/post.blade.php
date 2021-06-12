@@ -89,7 +89,7 @@
             <div class="comment_respond">
                 <h3 class="reply_title">Leave a Reply <small></small></h3>
 
-                {!! Form::open(['route' => ['frontend.posts.add_comment', $post->slug], 'method' => 'post', 'class' => 'comment__form']) !!}
+                {!! Form::open(['route' => ['frontend.comments.store', $post->slug], 'method' => 'post', 'class' => 'comment__form']) !!}
                 <p>Your email address will not be published. </p>
                 <div class="input__box">
                     {!! Form::textarea('comment', old('comment'), ['placeholder' => 'Your comment here']) !!}

@@ -14,20 +14,10 @@ use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
-    public function __construct()
-    {
-        if (\auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
 
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_users,show_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-user');
 
         $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
         $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
@@ -35,7 +25,7 @@ class UsersController extends Controller
         $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
         $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
 
-        $users = User::whereHas('roles', function ($query) {
+        $users = User::whereHas('role', function ($query) {
             $query->where('name', 'user');
         });
         if ($keyword != null) {
@@ -53,17 +43,14 @@ class UsersController extends Controller
 
     public function create()
     {
-        if (!\auth()->user()->ability('admin', 'create_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-user');
+
         return view('backend.users.create');
     }
 
     public function store(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'create_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-user');
 
         $validator = Validator::make($request->all(), [
             'name'          => 'required',
@@ -96,8 +83,7 @@ class UsersController extends Controller
             $data['user_image']  = $filename;
         }
 
-        $user = User::create($data);
-        $user->attachRole(Role::whereName('user')->first()->id);
+        User::create($data);
 
         return redirect()->route('admin.users.index')->with([
             'message' => 'Users created successfully',
@@ -107,9 +93,7 @@ class UsersController extends Controller
 
     public function show($id)
     {
-        if (!\auth()->user()->ability('admin', 'display_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-user');
 
         $user = User::whereId($id)->withCount('posts')->first();
         if ($user) {
@@ -124,9 +108,7 @@ class UsersController extends Controller
 
     public function edit($id)
     {
-        if (!\auth()->user()->ability('admin', 'update_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-user');
 
         $user = User::whereId($id)->first();
         if ($user) {
@@ -200,9 +182,7 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        if (!\auth()->user()->ability('admin', 'delete_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-user');
 
         $user = User::whereId($id)->first();
 
@@ -228,9 +208,7 @@ class UsersController extends Controller
 
     public function removeImage(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'delete_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-user');
 
         $user = User::whereId($request->user_id)->first();
         if ($user) {

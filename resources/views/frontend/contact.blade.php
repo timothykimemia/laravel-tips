@@ -5,7 +5,7 @@
         <div class="contact-form-wrap">
             <h2 class="contact__title">We’d love to hear from you</h2>
             <p>Let’s get this conversation started. Tell us a bit about yourself, and we’ll get in touch as soon as we can. </p>
-            {!! Form::open(['route' => 'frontend.do_contact', 'method' => 'post', 'id' => 'contact-form']) !!}
+            {!! Form::open(['route' => 'frontend.contacts.store', 'method' => 'post', 'id' => 'contact-form']) !!}
             <div class="single-contact-form">
                 {!! Form::text('name', old('name'), ['placeholder' => 'Full Name']) !!}
                 @error('name')<span class="text-danger">{{ $message }}</span>@enderror

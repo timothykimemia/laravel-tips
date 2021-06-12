@@ -9,20 +9,9 @@ use Spatie\Valuestore\Valuestore;
 
 class SettingsController extends Controller
 {
-    public function __construct()
-    {
-        if (\auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
-
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_settings,show_settings')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-setting');
 
         $section = (isset(\request()->section) && \request()->section != '') ? \request()->section : 'general';
         $settings_sections = Setting::select('section')->distinct()->pluck('section');

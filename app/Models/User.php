@@ -93,4 +93,5 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $role->permissions()->whereName($permission)->first() ? true : false;
     }
+
 }
