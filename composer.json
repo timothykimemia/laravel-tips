@@ -53,7 +53,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helper/GeneralHelper.php"
+            "app/Helper/GeneralHelper.php",
+            "app/Helper/MySlugHelper.php"
         ]
     },
     "autoload-dev": {
