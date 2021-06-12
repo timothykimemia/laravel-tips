@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Edit comment on ({{ $comment->post->title }})</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.post_comments.index') }}" class="btn btn-primary">
+                <a href="{{ route('admin.comments.index') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-home"></i>
                     </span>
@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
 
-            {!! Form::model($comment, ['route' => ['admin.post_comments.update', $comment->id], 'method' => 'patch']) !!}
+            {!! Form::model($comment, ['route' => ['admin.comments.update', $comment->id], 'method' => 'patch']) !!}
             <div class="row">
                 <div class="col-4">
                     <div class="form-group">

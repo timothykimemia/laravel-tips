@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Posts Categories</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.post_categories.create') }}" class="btn btn-primary">
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-plus"></i>
                     </span>
@@ -36,9 +36,9 @@
                         <td>{{ $category->created_at->format('d-m-Y h:i a') }}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ route('admin.post_categories.edit', $category->id) }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                                 <a href="javascript:void(0)" onclick="if (confirm('Are you sure to delete this category?') ) { document.getElementById('category-delete-{{ $category->id }}').submit(); } else { return false; }" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                <form action="{{ route('admin.post_categories.destroy', $category->id) }}" method="post" id="category-delete-{{ $category->id }}" style="display: none;">
+                                <form action="{{ route('admin.categories.destroy', $category->id) }}" method="post" id="category-delete-{{ $category->id }}" style="display: none;">
                                     @csrf
                                     @method('DELETE')
                                 </form>

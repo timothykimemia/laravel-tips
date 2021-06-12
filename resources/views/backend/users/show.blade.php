@@ -19,9 +19,9 @@
                     <tr>
                         <td colspan="4">
                             @if ($user->user_image != '')
-                                <img src="{{ asset('assets/users/' . $user->user_image) }}" class="img-fluid">
+                                <img src="{{ asset('storage/assets/users/' . $user->user_image) }}" class="img-fluid">
                             @else
-                                <img src="{{ asset('assets/users/default.png') }}" class="img-fluid">
+                                <img src="{{ asset('frontend/images/sm_default.jpg') }}" class="img-fluid">
                             @endif
                         </td>
                     </tr>

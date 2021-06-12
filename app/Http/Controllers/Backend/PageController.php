@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePageRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostMedia;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
-class PagesController extends Controller
+class PageController extends Controller
 {
     use FilterTrait;
 
@@ -33,40 +34,28 @@ class PagesController extends Controller
         $this->authorize('add-page');
 
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
+
         return view('backend.pages.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StorePageRequest $request)
     {
         $this->authorize('add-page');
 
-        $validator = Validator::make($request->all(), [
-            'title'         => 'required',
-            'description'   => 'required|min:50',
-            'status'        => 'required',
-            'category_id'   => 'required',
-            'images.*'      => 'nullable|mimes:jpg,jpeg,png,gif|max:20000',
-        ]);
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $data['title']              = $request->title;
-        $data['description']        = Purify::clean($request->description);
-        $data['status']             = $request->status;
-        $data['post_type']          = 'page';
-        $data['comment_able']       = 0;
-        $data['category_id']        = $request->category_id;
-
-        $page = auth()->user()->posts()->create($data);
+        $page = auth()->user()->posts()->create($request->validated() + [
+                'description' => Purify::clean($request->description),
+                'post_type' => 'page',
+                'comment_able' => 0,
+                'category_id' => $request->category_id,
+            ]);
 
         if ($request->images && count($request->images) > 0) {
             $i = 1;
             foreach ($request->images as $file) {
-                $filename = $page->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
+                $filename = $page->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
                 $file_size = $file->getSize();
                 $file_type = $file->getMimeType();
-                $path = public_path('assets/posts/' . $filename);
+                $path = storage_path('app/public/assets/posts/' . $filename);
                 Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($path, 100);
@@ -104,61 +93,40 @@ class PagesController extends Controller
         return view('backend.pages.edit', compact('categories', 'page'));
     }
 
-    public function update(Request $request, $id)
+        public function update(StorePageRequest $request, $id)
     {
         $this->authorize('edit-page');
 
-        $validator = Validator::make($request->all(), [
-            'title'         => 'required',
-            'description'   => 'required|min:50',
-            'status'        => 'required',
-            'category_id'   => 'required',
-            'images.*'      => 'nullable|mimes:jpg,jpeg,png,gif|max:20000',
-        ]);
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
         $page = Post::whereId($id)->wherePostType('page')->first();
 
-        if ($page) {
-            $data['title']              = $request->title;
-            $data['slug']               = null;
-            $data['description']        = Purify::clean($request->description);
-            $data['status']             = $request->status;
-            $data['category_id']        = $request->category_id;
-
-            $page->update($data);
-
-            if ($request->images && count($request->images) > 0) {
-                $i = 1;
-                foreach ($request->images as $file) {
-                    $filename = $page->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
-                    $file_size = $file->getSize();
-                    $file_type = $file->getMimeType();
-                    $path = public_path('assets/posts/' . $filename);
-                    Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    })->save($path, 100);
-
-                    $page->media()->create([
-                        'file_name' => $filename,
-                        'file_size' => $file_size,
-                        'file_type' => $file_type,
-                    ]);
-                    $i++;
-                }
-            }
-
-            return redirect()->route('admin.pages.index')->with([
-                'message' => 'Page updated successfully',
-                'alert-type' => 'success',
+        $page->update($request->validated() + [
+                'slug' => null,
+                'description' => Purify::clean($request->description)
             ]);
 
+        if ($request->images && count($request->images) > 0) {
+            $i = 1;
+            foreach ($request->images as $file) {
+                $filename = $page->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
+                $file_size = $file->getSize();
+                $file_type = $file->getMimeType();
+                $path = storage_path('app/public/assets/posts/' . $filename);
+                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($path, 100);
+
+                $page->media()->create([
+                    'file_name' => $filename,
+                    'file_size' => $file_size,
+                    'file_type' => $file_type,
+                ]);
+                $i++;
+            }
         }
+
         return redirect()->route('admin.pages.index')->with([
-            'message' => 'Something was wrong',
-            'alert-type' => 'danger',
+            'message' => 'Page updated successfully',
+            'alert-type' => 'success',
         ]);
     }
 
@@ -171,12 +139,14 @@ class PagesController extends Controller
         if ($page) {
             if ($page->media->count() > 0) {
                 foreach ($page->media as $media) {
-                    if (File::exists('assets/posts/' . $media->file_name)) {
-                        unlink('assets/posts/' . $media->file_name);
+                    if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                        unlink('storage/assets/posts/' . $media->file_name);
                     }
                 }
             }
             $page->delete();
+
+            clear_cache();
 
             return redirect()->route('admin.pages.index')->with([
                 'message' => 'Page deleted successfully',
@@ -196,10 +166,12 @@ class PagesController extends Controller
 
         $media = PostMedia::whereId($request->media_id)->first();
         if ($media) {
-            if (File::exists('assets/posts/' . $media->file_name)) {
-                unlink('assets/posts/' . $media->file_name);
+            if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                unlink('storage/assets/posts/' . $media->file_name);
             }
             $media->delete();
+
+            clear_cache();
             return true;
         }
         return false;

@@ -10,25 +10,21 @@ class PostController extends Controller
     public function show($post_slug)
     {
         $post = Post::with(['category', 'media', 'user', 'tags',
-            'approved_comments' => function($query) {
+            'approved_comments' => function ($query) {
                 $query->orderBy('id', 'desc');
             }
-        ]);
-
-        $post = $post->whereHas('category', function ($query) {
-            $query->whereStatus(1);
-        })
+        ])
+            ->whereHas('category', function ($query) {
+                $query->whereStatus(1);
+            })
             ->whereHas('user', function ($query) {
                 $query->whereStatus(1);
-            });
+            })
+            ->whereSlug($post_slug)
+            ->whereStatus(1)->first();
 
-        $post = $post->whereSlug($post_slug);
-        $post = $post->whereStatus(1)->first();
-
-        if($post) {
-
+        if ($post) {
             $blade = $post->post_type == 'post' ? 'posts' : 'pages';
-
             return view('frontend.' . $blade . '.show', compact('post'));
         } else {
             return redirect()->route('frontend.index');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Traits\FilterTrait;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
     use FilterTrait;
 
@@ -35,42 +36,24 @@ class UsersController extends Controller
         return view('backend.users.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
         $this->authorize('add-user');
 
-        $validator = Validator::make($request->all(), [
-            'name'          => 'required',
-            'username'      => 'required|max:20|unique:users',
-            'email'         => 'required|email|max:255|unique:users',
-            'mobile'        => 'required|numeric|unique:users',
-            'status'        => 'required',
-            'password'      => 'required|min:8',
-        ]);
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $data['name']           = $request->name;
-        $data['username']       = $request->username;
-        $data['email']          = $request->email;
-        $data['email_verified_at'] = Carbon::now();
-        $data['mobile']         = $request->mobile;
-        $data['password']       = bcrypt($request->password);
-        $data['status']         = $request->status;
-        $data['bio']            = $request->bio;
-        $data['receive_email']  = $request->receive_email;
-
         if ($user_image = $request->file('user_image')) {
-            $filename = Str::slug($request->username).'.'.$user_image->getClientOriginalExtension();
-            $path = public_path('assets/users/' . $filename);
+            $filename = Str::slug($request->username) . '.' . $user_image->getClientOriginalExtension();
+            $path = storage_path('app/public/assets/users/' . $filename);
             Image::make($user_image->getRealPath())->resize(300, 300, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($path, 100);
-            $data['user_image']  = $filename;
         }
 
-        User::create($data);
+        User::create($request->validated() + [
+                'email_verified_at' => Carbon::now(),
+                'password' => bcrypt($request->password),
+                'receive_email' => $request->receive_email ?? 0,
+                'user_image' => $filename ?? null
+            ]);
 
         return redirect()->route('admin.users.index')->with([
             'message' => 'Users created successfully',
@@ -82,15 +65,9 @@ class UsersController extends Controller
     {
         $this->authorize('view-user');
 
-        $user = User::whereId($id)->withCount('posts')->first();
-        if ($user) {
-            return view('backend.users.show', compact('user'));
-        }
-        return redirect()->route('admin.users.index')->with([
-            'message' => 'Something was wrong',
-            'alert-type' => 'danger',
-        ]);
+        $user = User::whereId($id)->withCount('posts')->firstOrFail();
 
+        return view('backend.users.show', compact('user'));
     }
 
     public function edit($id)
@@ -109,48 +86,46 @@ class UsersController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!\auth()->user()->ability('admin', 'update_users')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-user');
 
         $validator = Validator::make($request->all(), [
-            'name'          => 'required',
-            'username'      => 'required|max:20|unique:users,username,'.$id,
-            'email'         => 'required|email|max:255|unique:users,email,'.$id,
-            'mobile'        => 'required|numeric|unique:users,mobile,'.$id,
-            'status'        => 'required',
-            'password'      => 'nullable|min:8',
+            'name' => 'required',
+            'username' => 'required|max:20|unique:users,username,' . $id,
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'mobile' => 'required|numeric|unique:users,mobile,' . $id,
+            'status' => 'required',
+            'password' => 'nullable|min:8',
         ]);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $user = User::whereId($id)->first();
 
         if ($user) {
-            $data['name']           = $request->name;
-            $data['username']       = $request->username;
-            $data['email']          = $request->email;
-            $data['mobile']         = $request->mobile;
+            $data['name'] = $request->name;
+            $data['username'] = $request->username;
+            $data['email'] = $request->email;
+            $data['mobile'] = $request->mobile;
             if (trim($request->password) != '') {
                 $data['password'] = bcrypt($request->password);
             }
-            $data['status']         = $request->status;
-            $data['bio']            = $request->bio;
-            $data['receive_email']  = $request->receive_email;
+            $data['status'] = $request->status;
+            $data['bio'] = $request->bio;
+            $data['receive_email'] = $request->receive_email;
 
             if ($user_image = $request->file('user_image')) {
                 if ($user->user_image != '') {
-                    if (File::exists('assets/users/' . $user->user_image)) {
-                        unlink('assets/users/' . $user->user_image);
+                    if (File::exists('storage/assets/users/' . $user->user_image)) {
+                        unlink('storage/assets/users/' . $user->user_image);
                     }
                 }
-                $filename = Str::slug($request->username).'.'.$user_image->getClientOriginalExtension();
-                $path = public_path('assets/users/' . $filename);
+                $filename = Str::slug($request->username) . '.' . $user_image->getClientOriginalExtension();
+                $path = storage_path('app/public/assets/users/' . $filename);
                 Image::make($user_image->getRealPath())->resize(300, 300, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($path, 100);
-                $data['user_image']  = $filename;
+                $data['user_image'] = $filename;
             }
 
             $user->update($data);
@@ -175,8 +150,8 @@ class UsersController extends Controller
 
         if ($user) {
             if ($user->user_image != '') {
-                if (File::exists('assets/users/' . $user->user_image)) {
-                    unlink('assets/users/' . $user->user_image);
+                if (File::exists('storage/assets/users/' . $user->user_image)) {
+                    unlink('storage/assets/users/' . $user->user_image);
                 }
             }
             $user->delete();
@@ -199,8 +174,8 @@ class UsersController extends Controller
 
         $user = User::whereId($request->user_id)->first();
         if ($user) {
-            if (File::exists('assets/users/' . $user->user_image)) {
-                unlink('assets/users/' . $user->user_image);
+            if (File::exists('storage/assets/users/' . $user->user_image)) {
+                unlink('storage/assets/users/' . $user->user_image);
             }
             $user->user_image = null;
             $user->save();

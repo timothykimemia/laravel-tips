@@ -146,8 +146,8 @@ class SupervisorsController extends Controller
 
             if ($user_image = $request->file('user_image')) {
                 if ($user->user_image != '') {
-                    if (File::exists('assets/users/' . $user->user_image)) {
-                        unlink('assets/users/' . $user->user_image);
+                    if (File::exists('storage/assets/users/' . $user->user_image)) {
+                        unlink('storage/assets/users/' . $user->user_image);
                     }
                 }
                 $filename = Str::slug($request->username).'.'.$user_image->getClientOriginalExtension();
@@ -184,8 +184,8 @@ class SupervisorsController extends Controller
 
         if ($user) {
             if ($user->user_image != '') {
-                if (File::exists('assets/users/' . $user->user_image)) {
-                    unlink('assets/users/' . $user->user_image);
+                if (File::exists('storage/assets/users/' . $user->user_image)) {
+                    unlink('storage/assets/users/' . $user->user_image);
                 }
             }
             $user->delete();
@@ -208,8 +208,8 @@ class SupervisorsController extends Controller
 
         $user = User::whereId($request->user_id)->first();
         if ($user) {
-            if (File::exists('assets/users/' . $user->user_image)) {
-                unlink('assets/users/' . $user->user_image);
+            if (File::exists('storage/assets/users/' . $user->user_image)) {
+                unlink('storage/assets/users/' . $user->user_image);
             }
             $user->user_image = null;
             $user->save();

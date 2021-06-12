@@ -21,6 +21,24 @@
 
     <li class="nav-item">
         <a class="nav-link collapsed"
+           href="#" data-toggle="collapse" data-target="#collapse_categories"
+           aria-expanded="true"
+           aria-controls="collapse_categories">
+            <i class="fa fa-paper-plane"></i>
+            <span>Categories</span>
+        </a>
+        <div class="collapse" id="collapse_categories" aria-labelledby="heading_categories" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item active"
+                   href="{{ route('admin.categories.index') }}">All categories</a>
+                <a class="collapse-item"
+                   href="{{ route('admin.categories.create') }}">New category</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed"
            href="#" data-toggle="collapse" data-target="#collapse_posts"
            aria-expanded="true"
            aria-controls="collapse_posts">
@@ -83,6 +101,42 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item active"
                    href="{{ route('admin.users.index') }}">all users</a>
+                <a class="collapse-item active"
+                   href="{{ route('admin.users.create') }}">new user</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed"
+           href="#" data-toggle="collapse" data-target="#collapse_comments"
+           aria-expanded="true"
+           aria-controls="collapse_comments">
+            <i class="fa fa-pager"></i>
+            <span>Comments</span>
+        </a>
+        <div class="collapse" id="collapse_comments" aria-labelledby="heading_comments" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item active"
+                   href="{{ route('admin.comments.index') }}">all comments</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed"
+           href="#" data-toggle="collapse" data-target="#collapse_tags"
+           aria-expanded="true"
+           aria-controls="collapse_tags">
+            <i class="fa fa-pager"></i>
+            <span>Tags</span>
+        </a>
+        <div class="collapse" id="collapse_tags" aria-labelledby="heading_tags" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item active"
+                   href="{{ route('admin.tags.index') }}">all tags</a>
+                <a class="collapse-item active"
+                   href="{{ route('admin.tags.create') }}">new tag</a>
             </div>
         </div>
     </li>

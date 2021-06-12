@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Edit category ({{ $category->name }})</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.post_categories.index') }}" class="btn btn-primary">
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-home"></i>
                     </span>
@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
 
-            {!! Form::model($category, ['route' => ['admin.post_categories.update', $category->id], 'method' => 'patch']) !!}
+            {!! Form::model($category, ['route' => ['admin.categories.update', $category->id], 'method' => 'patch']) !!}
             <div class="row">
                 <div class="col-8">
                     <div class="form-group">

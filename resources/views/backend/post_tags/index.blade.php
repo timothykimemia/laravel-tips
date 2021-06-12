@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Tags</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.post_tags.create') }}" class="btn btn-primary">
+                <a href="{{ route('admin.tags.create') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-plus"></i>
                     </span>
@@ -34,9 +34,9 @@
                         <td>{{ $tag->created_at->format('d-m-Y h:i a') }}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ route('admin.post_tags.edit', $tag->id) }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                <a href="{{ route('admin.tags.edit', $tag->id) }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                                 <a href="javascript:void(0)" onclick="if (confirm('Are you sure to delete this tag?') ) { document.getElementById('tag-delete-{{ $tag->id }}').submit(); } else { return false; }" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                <form action="{{ route('admin.post_tags.destroy', $tag->id) }}" method="post" id="tag-delete-{{ $tag->id }}" style="display: none;">
+                                <form action="{{ route('admin.tags.destroy', $tag->id) }}" method="post" id="tag-delete-{{ $tag->id }}" style="display: none;">
                                     @csrf
                                     @method('DELETE')
                                 </form>

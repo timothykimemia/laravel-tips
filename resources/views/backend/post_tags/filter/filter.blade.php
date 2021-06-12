@@ -1,5 +1,5 @@
 <div class="card-body">
-    {!! Form::open(['route' => 'admin.post_categories.index', 'method' => 'get']) !!}
+    {!! Form::open(['route' => 'admin.categories.index', 'method' => 'get']) !!}
     <div class="row">
         <div class="col-2">
             <div class="form-group">

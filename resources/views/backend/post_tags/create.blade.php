@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Create tag</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.post_tags.index') }}" class="btn btn-primary">
+                <a href="{{ route('admin.tags.index') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-home"></i>
                     </span>
@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
 
-            {!! Form::open(['route' => 'admin.post_tags.store', 'method' => 'post']) !!}
+            {!! Form::open(['route' => 'admin.tags.store', 'method' => 'post']) !!}
             <div class="row">
                 <div class="col-12">
                     <div class="form-group">

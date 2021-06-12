@@ -58,8 +58,8 @@ class UsersController extends Controller
 
         if ($image = $request->file('user_image')) {
             if (auth()->user()->user_image != ''){
-                if (File::exists('/storage/assets/users/' . auth()->user()->user_image)){
-                    unlink('/storage/assets/users/' . auth()->user()->user_image);
+                if (File::exists('storage/assets/users/' . auth()->user()->user_image)){
+                    unlink('storage/assets/users/' . auth()->user()->user_image);
                 }
             }
             $filename = Str::slug(auth()->user()->username).'.'.$image->getClientOriginalExtension();
@@ -302,8 +302,8 @@ class UsersController extends Controller
             if ($post) {
                 if ($post->media->count() > 0) {
                     foreach ($post->media as $media) {
-                        if (File::exists('assets/posts/' . $media->file_name)) {
-                            unlink('assets/posts/' . $media->file_name);
+                        if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                            unlink('storage/assets/posts/' . $media->file_name);
                         }
                     }
                 }
@@ -328,8 +328,8 @@ class UsersController extends Controller
     {
         $media = PostMedia::whereId($media_id)->first();
         if ($media) {
-            if (File::exists('assets/posts/' . $media->file_name)) {
-                unlink('assets/posts/' . $media->file_name);
+            if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                unlink('storage/assets/posts/' . $media->file_name);
             }
              $media->delete();
             clear_cache();
