@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\UserPermission;
+use App\Traits\FilterTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -16,28 +16,16 @@ use Intervention\Image\Facades\Image;
 
 class SupervisorsController extends Controller
 {
+    use FilterTrait;
+
     public function index()
     {
         $this->authorize('view-supervisor');
 
-        $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
-        $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
-        $sort_by = (isset(\request()->sort_by) && \request()->sort_by != '') ? \request()->sort_by : 'id';
-        $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
-        $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
-
-        $users = User::whereHas('role', function ($query) {
+        $query = User::whereHas('role', function ($query) {
             $query->where('name', 'editor');
         });
-        if ($keyword != null) {
-            $users = $users->search($keyword);
-        }
-        if ($status != null) {
-            $users = $users->whereStatus($status);
-        }
-
-        $users = $users->orderBy($sort_by, $order_by);
-        $users = $users->paginate($limit_by);
+        $users = $this->filter($query);
 
         return view('backend.supervisors.index', compact('users'));
     }

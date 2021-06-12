@@ -3,7 +3,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex">
-            <h6 class="m-0 font-weight-bold text-primary">{{ $message->title }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary">{{ $contact->title }}</h6>
             <div class="ml-auto">
                 <a href="{{ route('admin.contacts.index') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
@@ -18,15 +18,15 @@
                 <tbody>
                     <tr>
                         <th>Title</th>
-                        <td>{{ $message->title }}</td>
+                        <td>{{ $contact->title }}</td>
                     </tr>
                     <tr>
                         <th>From</th>
-                        <td>{{ $message->name }} <{{ $message->email }}></td>
+                        <td>{{ $contact->name }} <{{ $contact->email }}></td>
                     </tr>
                     <tr>
                         <th>Message</th>
-                        <td>{!! $message->message !!}</td>
+                        <td>{!! $contact->message !!}</td>
                     </tr>
                 </tbody>
             </table>

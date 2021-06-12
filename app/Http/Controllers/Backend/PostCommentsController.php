@@ -5,47 +5,19 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Traits\FilterTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
 
 class PostCommentsController extends Controller
 {
-    public function __construct()
-    {
-        if (\auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
+    use FilterTrait;
 
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_post_comments,show_post_comments')) {
-            return redirect('admin/index');
-        }
-
-        $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
-        $postId = (isset(\request()->post_id) && \request()->post_id != '') ? \request()->post_id : null;
-        $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
-        $sort_by = (isset(\request()->sort_by) && \request()->sort_by != '') ? \request()->sort_by : 'id';
-        $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
-        $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
-
-        $comments = Comment::query();
-        if ($keyword != null) {
-            $comments = $comments->search($keyword);
-        }
-        if ($postId != null) {
-            $comments = $comments->wherePostId($postId);
-        }
-        if ($status != null) {
-            $comments = $comments->whereStatus($status);
-        }
-
-        $comments = $comments->orderBy($sort_by, $order_by);
-        $comments = $comments->paginate($limit_by);
+        $query = Comment::query();
+        $comments = $this->filter($query);
 
         $posts = Post::wherePostType('post')->pluck('title', 'id');
         return view('backend.post_comments.index', compact('comments', 'posts'));
@@ -54,20 +26,12 @@ class PostCommentsController extends Controller
 
     public function edit($id)
     {
-        if (!\auth()->user()->ability('admin', 'update_post_comments')) {
-            return redirect('admin/index');
-        }
-
         $comment = Comment::whereId($id)->first();
         return view('backend.post_comments.edit', compact('comment'));
     }
 
     public function update(Request $request, $id)
     {
-        if (!\auth()->user()->ability('admin', 'update_post_comments')) {
-            return redirect('admin/index');
-        }
-
         $validator = Validator::make($request->all(), [
             'name'          => 'required',
             'email'         => 'required|email',
@@ -104,10 +68,6 @@ class PostCommentsController extends Controller
 
     public function destroy($id)
     {
-        if (!\auth()->user()->ability('admin', 'delete_post_comments')) {
-            return redirect('admin/index');
-        }
-
         $comment = Comment::whereId($id)->first();
         $comment->delete();
         clear_cache();

@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Spatie\Valuestore\Valuestore;
+
+function getSettingsOf($key) {
+    $settings = Valuestore::make(config_path('settings.json'));
+    return $settings->get($key);
+}
 
 function get_gravatar( $email, $s = 80, $d = 'mp', $r = 'g', $img = false, $atts = array() ) {
     $url = 'https://www.gravatar.com/avatar/';

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostMedia;
+use App\Traits\FilterTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -14,34 +15,17 @@ use Stevebauman\Purify\Facades\Purify;
 
 class PagesController extends Controller
 {
+    use FilterTrait;
+
     public function index()
     {
         $this->authorize('view-page');
 
-        $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
-        $categoryId = (isset(\request()->category_id) && \request()->category_id != '') ? \request()->category_id : null;
-        $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
-        $sort_by = (isset(\request()->sort_by) && \request()->sort_by != '') ? \request()->sort_by : 'id';
-        $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
-        $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
-
-        $pages = Post::wherePostType('page');
-        if ($keyword != null) {
-            $pages = $pages->search($keyword);
-        }
-        if ($categoryId != null) {
-            $pages = $pages->whereCategoryId($categoryId);
-        }
-        if ($status != null) {
-            $pages = $pages->whereStatus($status);
-        }
-
-        $pages = $pages->orderBy($sort_by, $order_by);
-        $pages = $pages->paginate($limit_by);
-
+        $query = Post::wherePostType('page');
+        $pages = $this->filter($query);
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
-        return view('backend.pages.index', compact('categories', 'pages'));
 
+        return view('backend.pages.index', compact('categories', 'pages'));
     }
 
     public function create()

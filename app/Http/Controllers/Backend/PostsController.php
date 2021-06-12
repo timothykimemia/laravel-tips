@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostMedia;
 use App\Models\Tag;
+use App\Traits\FilterTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -16,50 +17,17 @@ use Stevebauman\Purify\Facades\Purify;
 
 class PostsController extends Controller
 {
-
-    public function __construct()
-    {
-        if (auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
+    use FilterTrait;
 
     public function index()
     {
         $this->authorize('view-post');
 
-        $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
-        $categoryId = (isset(\request()->category_id) && \request()->category_id != '') ? \request()->category_id : null;
-        $tagId = (isset(\request()->tag_id) && \request()->tag_id != '') ? \request()->tag_id : null;
-        $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
-        $sort_by = (isset(\request()->sort_by) && \request()->sort_by != '') ? \request()->sort_by : 'id';
-        $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
-        $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
-
-        $posts = Post::with(['user', 'category', 'comments'])->wherePostType('post');
-        if ($keyword != null) {
-            $posts = $posts->search($keyword);
-        }
-        if ($categoryId != null) {
-            $posts = $posts->whereCategoryId($categoryId);
-        }
-        if ($tagId != null) {
-            $posts = $posts->whereHas('tags', function ($query) use ($tagId) {
-                $query->where('id', $tagId);
-            });
-        }
-        if ($status != null) {
-            $posts = $posts->whereStatus($status);
-        }
-
-        $posts = $posts->orderBy($sort_by, $order_by);
-        $posts = $posts->paginate($limit_by);
+        $query = Post::with(['user', 'category', 'comments'])->wherePostType('post');
+        $posts = $this->filter($query);
 
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
         return view('backend.posts.index', compact('categories', 'posts'));
-
     }
 
     public function create()
