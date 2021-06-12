@@ -88,17 +88,15 @@ class RegisterController extends Controller
         if (isset($data['user_image'])) {
             if ($image = $data['user_image']){
                 $filename = Str::slug($data['username']) . '.' . $image->getClientOriginalExtension();
-                $path = public_path('/assets/users/' . $filename);
+                $path = storage_path('app/public/assets/users/' . $filename);
                 Image::make($image->getRealPath())->resize(300, 300, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($path, 100);
                 $user->update(['user_image' => $filename]);
             }
         }
-        $user->attachRole(Role::whereName('user')->first()->id);
 
         return $user;
-
     }
 
     protected function registered(Request $request, $user)
@@ -109,5 +107,4 @@ class RegisterController extends Controller
             'alert-type' => 'success'
         ]);
     }
-
 }

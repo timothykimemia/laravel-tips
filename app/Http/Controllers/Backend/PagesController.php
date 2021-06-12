@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Page;
+use App\Models\Post;
 use App\Models\PostMedia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -14,20 +14,9 @@ use Stevebauman\Purify\Facades\Purify;
 
 class PagesController extends Controller
 {
-    public function __construct()
-    {
-        if (\auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
-
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_pages,show_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-page');
 
         $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
         $categoryId = (isset(\request()->category_id) && \request()->category_id != '') ? \request()->category_id : null;
@@ -36,7 +25,7 @@ class PagesController extends Controller
         $order_by = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'desc';
         $limit_by = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
 
-        $pages = Page::wherePostType('page');
+        $pages = Post::wherePostType('page');
         if ($keyword != null) {
             $pages = $pages->search($keyword);
         }
@@ -57,9 +46,7 @@ class PagesController extends Controller
 
     public function create()
     {
-        if (!\auth()->user()->ability('admin', 'create_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-page');
 
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
         return view('backend.pages.create', compact('categories'));
@@ -67,9 +54,7 @@ class PagesController extends Controller
 
     public function store(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'create_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('add-page');
 
         $validator = Validator::make($request->all(), [
             'title'         => 'required',
@@ -119,31 +104,25 @@ class PagesController extends Controller
 
     public function show($id)
     {
-        if (!\auth()->user()->ability('admin', 'display_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-page');
 
-        $page = Page::with(['media'])->whereId($id)->wherePostType('page')->first();
+        $page = Post::with(['media'])->whereId($id)->wherePostType('page')->first();
         return view('backend.pages.show', compact('page'));
     }
 
     public function edit($id)
     {
-        if (!\auth()->user()->ability('admin', 'update_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-page');
 
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
-        $page = Page::with(['media'])->whereId($id)->wherePostType('page')->first();
+        $page = Post::with(['media'])->whereId($id)->wherePostType('page')->first();
 
         return view('backend.pages.edit', compact('categories', 'page'));
     }
 
     public function update(Request $request, $id)
     {
-        if (!\auth()->user()->ability('admin', 'update_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('edit-page');
 
         $validator = Validator::make($request->all(), [
             'title'         => 'required',
@@ -156,7 +135,7 @@ class PagesController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $page = Page::whereId($id)->wherePostType('page')->first();
+        $page = Post::whereId($id)->wherePostType('page')->first();
 
         if ($page) {
             $data['title']              = $request->title;
@@ -201,11 +180,9 @@ class PagesController extends Controller
 
     public function destroy($id)
     {
-        if (!\auth()->user()->ability('admin', 'delete_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-page');
 
-        $page = Page::whereId($id)->wherePostType('page')->first();
+        $page = Post::whereId($id)->wherePostType('page')->first();
 
         if ($page) {
             if ($page->media->count() > 0) {
@@ -231,9 +208,7 @@ class PagesController extends Controller
 
     public function removeImage(Request $request)
     {
-        if (!\auth()->user()->ability('admin', 'delete_pages')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-page');
 
         $media = PostMedia::whereId($request->media_id)->first();
         if ($media) {

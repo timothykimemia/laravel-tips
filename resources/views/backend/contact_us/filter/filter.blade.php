@@ -1,5 +1,5 @@
 <div class="card-body">
-    {!! Form::open(['route' => 'admin.contact_us.index', 'method' => 'get']) !!}
+    {!! Form::open(['route' => 'admin.contacts.index', 'method' => 'get']) !!}
     <div class="row">
         <div class="col-2">
             <div class="form-group">

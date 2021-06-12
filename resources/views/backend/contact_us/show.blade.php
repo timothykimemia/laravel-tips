@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">{{ $message->title }}</h6>
             <div class="ml-auto">
-                <a href="{{ route('admin.contact_us.index') }}" class="btn btn-primary">
+                <a href="{{ route('admin.contacts.index') }}" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa fa-home"></i>
                     </span>

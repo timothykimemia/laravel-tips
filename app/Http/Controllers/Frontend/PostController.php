@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -24,16 +23,15 @@ class PostController extends Controller
             });
 
         $post = $post->whereSlug($post_slug);
-        $post = $post->active()->first();
+        $post = $post->whereStatus(1)->first();
 
         if($post) {
 
-            $blade = $post->post_type == 'post' ? 'post' : 'page';
+            $blade = $post->post_type == 'post' ? 'posts' : 'pages';
 
-            return view('frontend.' . $blade, compact('post'));
+            return view('frontend.' . $blade . '.show', compact('post'));
         } else {
             return redirect()->route('frontend.index');
         }
-
     }
 }

@@ -8,21 +8,9 @@ use Illuminate\Http\Request;
 
 class ContactUsController extends Controller
 {
-
-    public function __construct()
-    {
-        if (\auth()->check()){
-            $this->middleware('auth');
-        } else {
-            return view('backend.auth.login');
-        }
-    }
-
     public function index()
     {
-        if (!\auth()->user()->ability('admin', 'manage_contact_us,show_contact_us')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-contact');
 
         $keyword = (isset(\request()->keyword) && \request()->keyword != '') ? \request()->keyword : null;
         $status = (isset(\request()->status) && \request()->status != '') ? \request()->status : null;
@@ -46,9 +34,7 @@ class ContactUsController extends Controller
 
     public function show($id)
     {
-        if (!\auth()->user()->ability('admin', 'display_contact_us')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('view-contact');
 
         $message = Contact::whereId($id)->first();
         if ($message && $message->status == 0) {
@@ -60,9 +46,7 @@ class ContactUsController extends Controller
 
     public function destroy($id)
     {
-        if (!\auth()->user()->ability('admin', 'delete_contact_us')) {
-            return redirect('admin/index');
-        }
+        $this->authorize('delete-contact');
 
         $message = Contact::whereId($id)->first();
 
@@ -75,7 +59,7 @@ class ContactUsController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.contact_us.index')->with([
+        return redirect()->route('admin.contacts.index')->with([
             'message' => 'Something was wrong',
             'alert-type' => 'danger',
         ]);

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Page;
+use App\Models\Post;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +17,7 @@ class PagesTableSeeder extends Seeder
     {
         $faker = Factory::create();
 
-        Page::create([
+        Post::create([
             'title'         => 'About Us',
             'description'   => 'Let’s get this conversation started. Tell us a bit about yourself, and we’ll get in touch as soon as we can.',
             'status'        => 1,
@@ -27,7 +27,7 @@ class PagesTableSeeder extends Seeder
             'category_id'   => 1,
         ]);
 
-        Page::create([
+        Post::create([
             'title'         => 'Our Vision',
             'description'   => 'Our vision is to help people in different Programming fields. We believe ALLAH cares deeply for the marginalized in society and our mission is to join in with Him to help people flourish socially, economically, and spiritually.',
             'status'        => 1,

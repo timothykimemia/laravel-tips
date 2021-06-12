@@ -23,7 +23,7 @@ class CommentsTableSeeder extends Seeder
 //        $users       = collect(User::where('id', '>', 2)->get()->modelKeys());
         $posts       = collect(Post::wherePostType('post')->whereStatus(1)->whereCommentAble(1)->get());
 
-        for($i = 0 ; $i < 100; $i++) {
+        for($i = 0 ; $i < 50; $i++) {
 
             $selected_post = $posts->random();
             $post_date = $selected_post->created_at->timestamp;

@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersSeeder::class);
         $this->call(CategoriesTableSeeder::class);
         $this->call(TagsTableSeeder::class);
-//        $this->call(PostsTableSeeder::class);
-//        $this->call(PostsTagsTableSeeder::class);
-//        $this->call(PagesTableSeeder::class);
-//        $this->call(CommentsTableSeeder::class);
+        $this->call(PostsTableSeeder::class);
+        $this->call(PostsTagsTableSeeder::class);
+        $this->call(PagesTableSeeder::class);
+        $this->call(CommentsTableSeeder::class);
         $this->call(SettingsTableSeeder::class);
 
     }

@@ -4,15 +4,10 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Contact;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Tag;
-use App\Notifications\NewCommentForAdminNotify;
-use App\Notifications\NewCommentForPostOwnerNotify;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Stevebauman\Purify\Facades\Purify;
 
 class IndexController extends Controller
 {
@@ -26,7 +21,7 @@ class IndexController extends Controller
             ->whereHas('user', function ($query) {
                 $query->whereStatus(1);
             })
-            ->post()->active()->orderBy('id', 'desc')->paginate(5);
+            ->wherePostType('post')->whereStatus(1)->orderBy('id', 'desc')->paginate(5);
 
         return view('frontend.index', compact('posts'));
     }
@@ -47,7 +42,7 @@ class IndexController extends Controller
             $posts = $posts->search($keyword, null, true);
         }
 
-        $posts = $posts->post()->active()->orderBy('id', 'desc')->paginate(5);
+        $posts = $posts->wherePostType('post')->whereStatus(1)->orderBy('id', 'desc')->paginate(5);
 
         return view('frontend.index', compact('posts'));
     }
@@ -59,8 +54,8 @@ class IndexController extends Controller
         if ($category) {
             $posts = Post::with(['media', 'user', 'tags'])
                 ->whereCategoryId($category)
-                ->post()
-                ->active()
+                ->wherePostType('post')
+                ->whereStatus(1)
                 ->orderBy('id', 'desc')
                 ->paginate(5);
 
@@ -79,8 +74,8 @@ class IndexController extends Controller
                 ->whereHas('tags', function ($query) use ($slug) {
                     $query->where('slug', $slug);
                 })
-                ->post()
-                ->active()
+                ->wherePostType('post')
+                ->whereStatus(1)
                 ->orderBy('id', 'desc')
                 ->paginate(5);
 
@@ -99,8 +94,8 @@ class IndexController extends Controller
         $posts = Post::with(['media', 'user', 'tags'])
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
-            ->post()
-            ->active()
+            ->wherePostType('post')
+            ->whereStatus(1)
             ->orderBy('id', 'desc')
             ->paginate(5);
         return view('frontend.index', compact('posts'));
@@ -114,8 +109,8 @@ class IndexController extends Controller
         if ($user) {
             $posts = Post::with(['media', 'user', 'tags'])
                 ->whereUserId($user)
-                ->post()
-                ->active()
+                ->wherePostType('post')
+                ->whereStatus(1)
                 ->orderBy('id', 'desc')
                 ->paginate(5);
 
@@ -124,13 +119,4 @@ class IndexController extends Controller
 
         return redirect()->route('frontend.index');
     }
-
-
-
-
-
-
-
-
-
 }

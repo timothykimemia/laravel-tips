@@ -10,7 +10,16 @@ class Comment extends Model
 
     use SearchableTrait;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'email',
+        'url',
+        'ip_address',
+        'comment',
+        'status',
+        'post_id',
+        'user_id'
+    ];
 
     protected $searchable = [
         'columns'   => [

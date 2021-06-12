@@ -11,7 +11,7 @@ class ContactController extends Controller
 {
     public function create()
     {
-        return view('frontend.contact');
+        return view('frontend.contact.index');
     }
 
     public function store(Request $request)

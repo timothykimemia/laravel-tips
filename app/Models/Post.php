@@ -10,7 +10,16 @@ class Post extends Model
 {
     use Sluggable, SearchableTrait;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'slug',
+        'description',
+        'status',
+        'post_type',
+        'comment_able',
+        'user_id',
+        'category_id'
+    ];
 
     public function sluggable()
     {
@@ -28,29 +37,29 @@ class Post extends Model
         ],
     ];
 
-    public function scopeActive($query)
-    {
-        return $query->where('status', 1);
-    }
-    public function scopePost($query)
-    {
-        return $query->where('post_type', 'post');
-    }
-
-
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function media()
+    {
+        return $this->hasMany(PostMedia::class, 'post_id', 'id');
+    }
+
+    public function status()
+    {
+        return $this->status == 1 ? 'Active' : 'Inactive';
     }
 
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'posts_tags');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function comments()
@@ -60,19 +69,7 @@ class Post extends Model
 
     public function approved_comments()
     {
-        return $this->hasMany(Comment::class)->whereStatus(1);
+        return $this->comments()->where('status', 1);
     }
-
-    public function media()
-    {
-        return $this->hasMany(PostMedia::class);
-    }
-
-    public function status()
-    {
-        return $this->status == 1 ? 'Active' : 'Inactive';
-    }
-
-
 
 }

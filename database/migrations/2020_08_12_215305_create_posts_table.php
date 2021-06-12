@@ -20,9 +20,7 @@ class CreatePostsTable extends Migration
             $table->longText('description');
             $table->unsignedTinyInteger('status')->default(0);
             $table->string('post_type')->default('post');
-
             $table->unsignedTinyInteger('comment_able')->default(1);
-
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
