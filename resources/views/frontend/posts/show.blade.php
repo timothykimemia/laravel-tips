@@ -87,33 +87,41 @@
             </div>
 
             <div class="comment_respond">
+                @guest()
+                    <h3 class="reply_title"><a class="text-primary" href="{{ route('frontend.show_login_form') }}">log in here</a> before reply <small></small></h3>
+                @endguest
+                @auth()
                 <h3 class="reply_title">Leave a Reply <small></small></h3>
-
-                {!! Form::open(['route' => ['frontend.comments.store', $post->slug], 'method' => 'post', 'class' => 'comment__form']) !!}
-                <p>Your email address will not be published. </p>
-                <div class="input__box">
-                    {!! Form::textarea('comment', old('comment'), ['placeholder' => 'Your comment here']) !!}
-                    @error('comment')<span class="text-danger">{{ $message }}</span>@enderror
-                </div>
-                <div class="input__wrapper clearfix">
-                    <div class="input__box name one--third">
-                        {!! Form::text('name', old('name'), ['placeholder' => 'Your name here']) !!}
-                        @error('name')<span class="text-danger">{{ $message }}</span>@enderror
+                <form class="comment__form" action="{{ route('frontend.comments.store', $post->slug) }}" method="POST">
+                    @csrf
+                    <p>Your email address will not be published. </p>
+                    <div class="input__box">
+                        <label>
+                            <textarea name="comment" placeholder="Your comment here">{{ old('comment') }}</textarea>
+                        </label>
+                        @error('comment')<span class="text-danger">{{ $message }}</span>@enderror
                     </div>
-                    <div class="input__box email one--third">
-                        {!! Form::email('email', old('email'), ['placeholder' => 'Your email here']) !!}
-                        @error('email')<span class="text-danger">{{ $message }}</span>@enderror
+    {{--                <div class="input__wrapper clearfix">--}}
+    {{--                    <div class="input__box name one--third">--}}
+    {{--                        {!! Form::text('name', old('name'), ['placeholder' => 'Your name here']) !!}--}}
+    {{--                        @error('name')<span class="text-danger">{{ $message }}</span>@enderror--}}
+    {{--                    </div>--}}
+    {{--                    <div class="input__box email one--third">--}}
+    {{--                        {!! Form::email('email', old('email'), ['placeholder' => 'Your email here']) !!}--}}
+    {{--                        @error('email')<span class="text-danger">{{ $message }}</span>@enderror--}}
+    {{--                    </div>--}}
+    {{--                    <div class="input__box website one--third">--}}
+    {{--                        {!! Form::text('url', old('url'), ['placeholder' => 'Your URL here']) !!}--}}
+    {{--                        @error('url')<span class="text-danger">{{ $message }}</span>@enderror--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+                    <div class="submite__btn">
+                        <input type="submit" value="Comment" class="btn btn-outline-dark">
                     </div>
-{{--                    <div class="input__box website one--third">--}}
-{{--                        {!! Form::text('url', old('url'), ['placeholder' => 'Your URL here']) !!}--}}
-{{--                        @error('url')<span class="text-danger">{{ $message }}</span>@enderror--}}
-{{--                    </div>--}}
-                </div>
-                <div class="submite__btn">
-                    {!! Form::submit('Comment', ['class' => 'btn btn-outline-secondary']) !!}
-                </div>
-                {!! Form::close() !!}
+                </form>
+                @endauth
             </div>
+
         </div>
     </div>
 

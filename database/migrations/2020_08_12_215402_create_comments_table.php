@@ -20,7 +20,7 @@ class CreateCommentsTable extends Migration
             $table->string('url')->nullable();
             $table->string('ip_address')->nullable();
             $table->text('comment');
-            $table->unsignedTinyInteger('status')->default(0);
+            $table->unsignedTinyInteger('status')->default(1);
 
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
 

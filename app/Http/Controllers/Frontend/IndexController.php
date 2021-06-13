@@ -21,7 +21,9 @@ class IndexController extends Controller
             ->whereHas('user', function ($query) {
                 $query->whereStatus(1);
             })
-            ->wherePostType('post')->whereStatus(1)->orderBy('id', 'desc')->paginate(5);
+            ->wherePostType('post')
+            ->whereStatus(1)->orderBy('id', 'desc')
+            ->paginate(5);
 
         return view('frontend.index', compact('posts'));
     }
@@ -42,7 +44,10 @@ class IndexController extends Controller
             $posts = $posts->search($keyword, null, true);
         }
 
-        $posts = $posts->wherePostType('post')->whereStatus(1)->orderBy('id', 'desc')->paginate(5);
+        $posts = $posts->wherePostType('post')
+            ->whereStatus(1)
+            ->orderBy('id', 'desc')
+            ->paginate(5);
 
         return view('frontend.index', compact('posts'));
     }

@@ -16,18 +16,16 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware(['auth', 'verified']);
-    }
 
     public function index()
     {
         $posts = auth()->user()->posts()->with(['media', 'category', 'user'])
-            ->withCount('comments')->orderBy('id', 'desc')->paginate(10);
+            ->withCount('comments')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         return view('frontend.users.dashboard', compact('posts'));
     }
 
