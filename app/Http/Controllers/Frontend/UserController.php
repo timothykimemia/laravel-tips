@@ -10,16 +10,16 @@ use App\Models\Post;
 use App\Models\PostMedia;
 use App\Models\Tag;
 use App\Traits\AvatarUploadTrait;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
 class UserController extends Controller
 {
-    use AvatarUploadTrait;
+    use AvatarUploadTrait, ImageUploadTrait;
 
     public function get_post()
     {
@@ -101,6 +101,7 @@ class UserController extends Controller
     {
         $tags = Tag::pluck('name', 'id');
         $categories = Category::whereStatus(1)->pluck('name', 'id');
+
         return view('frontend.users.create_post', compact('categories', 'tags'));
     }
 
@@ -126,34 +127,14 @@ class UserController extends Controller
         $post = auth()->user()->posts()->create($data);
 
         if ($request->images && count($request->images) > 0) {
-            $i = 1;
-            foreach ($request->images as $file) {
-                $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                $file_size = $file->getSize();
-                $file_type = $file->getMimeType();
-                $path = storage_path('app/public/assets/posts/' . $filename);
-                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
-
-                $post->media()->create([
-                    'file_name' => $filename,
-                    'file_size' => $file_size,
-                    'file_type' => $file_type,
-                ]);
-                $i++;
-            }
+            $this->uploadImage($request->images, $post->slug, $post);
         }
 
         if (isset($request->tags)) {
             if (count($request->tags) > 0) {
                 $new_tags = [];
                 foreach ($request->tags as $tag) {
-                    $tag = Tag::firstOrCreate([
-                        'id' => $tag
-                    ], [
-                        'name' => $tag
-                    ]);
+                    $tag = Tag::firstOrCreate(['id' => $tag], ['name' => $tag]);
 
                     $new_tags[] = $tag->id;
                 }
@@ -174,7 +155,7 @@ class UserController extends Controller
 
     public function edit_post($post_id)
     {
-        $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->first();
+        $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->firstOrFail();
 
         if ($post) {
             $tags = Tag::pluck('name', 'id');
@@ -187,126 +168,94 @@ class UserController extends Controller
 
     public function update_post(Request $request, $post_id)
     {
-        try {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required|min:50',
+            'status' => 'required',
+            'comment_able' => 'required',
+            'category_id' => 'required',
+            'tags.*' => 'required',
+        ]);
 
-            $validator = Validator::make($request->all(), [
-                'title' => 'required',
-                'description' => 'required|min:50',
-                'status' => 'required',
-                'comment_able' => 'required',
-                'category_id' => 'required',
-                'tags.*' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->first();
-
-            if ($post) {
-                $data['title'] = $request->title;
-                $data['description'] = Purify::clean($request->description);
-                $data['status'] = $request->status;
-                $data['comment_able'] = $request->comment_able;
-                $data['category_id'] = $request->category_id;
-
-                $post->update($data);
-
-                if ($request->images && count($request->images) > 0) {
-                    $i = 1;
-                    foreach ($request->images as $file) {
-                        $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                        $file_size = $file->getSize();
-                        $file_type = $file->getMimeType();
-                        $path = storage_path('app/public/assets/posts/' . $filename);
-                        Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                        })->save($path, 100);
-
-                        $post->media()->create([
-                            'file_name' => $filename,
-                            'file_size' => $file_size,
-                            'file_type' => $file_type,
-                        ]);
-                        $i++;
-                    }
-                }
-
-                if (count($request->tags) > 0) {
-                    $new_tags = [];
-                    foreach ($request->tags as $tag) {
-                        $tag = Tag::firstOrCreate([
-                            'id' => $tag
-                        ], [
-                            'name' => $tag
-                        ]);
-
-                        $new_tags[] = $tag->id;
-                    }
-                    $post->tags()->sync($new_tags);
-                }
-
-                clear_cache();
-
-                return redirect()->route('users.dashboard')->with([
-                    'message' => 'Post updated successfully',
-                    'alert-type' => 'success',
-                ]);
-            }
-        } catch (\Exception $e) {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->firstOrFail();
+
+        $data['title'] = $request->title;
+        $data['description'] = Purify::clean($request->description);
+        $data['status'] = $request->status;
+        $data['comment_able'] = $request->comment_able;
+        $data['category_id'] = $request->category_id;
+
+        $post->update($data);
+
+        if ($request->images && count($request->images) > 0) {
+            $this->uploadImage($request->images, $post->slug, $post);
+        }
+
+        if (count($request->tags) > 0) {
+            $new_tags = [];
+            foreach ($request->tags as $tag) {
+                $tag = Tag::firstOrCreate(['id' => $tag], ['name' => $tag]);
+
+                $new_tags[] = $tag->id;
+            }
+            $post->tags()->sync($new_tags);
+        }
+
+        clear_cache();
+
+        return redirect()->route('users.get_post')->with([
+            'message' => 'Post updated successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     public function destroy_post($post_id)
     {
-        try {
-            $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->first();
+        $post = Post::whereSlug($post_id)
+            ->orWhere('id', $post_id)
+            ->whereUserId(auth()->id())
+            ->firstOrFail();
 
-            if ($post) {
-                if ($post->media->count() > 0) {
-                    foreach ($post->media as $media) {
-                        if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                            unlink('storage/assets/posts/' . $media->file_name);
-                        }
-                    }
+        if ($post->media->count() > 0) {
+            foreach ($post->media as $media) {
+                if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                    unlink('storage/assets/posts/' . $media->file_name);
                 }
-                $post->delete();
-
-                clear_cache();
-
-                return redirect()->route('users.dashboard')->with([
-                    'message' => 'Post deleted successfully',
-                    'alert-type' => 'success',
-                ]);
             }
-        } catch (\Exception $e) {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
         }
+
+        $post->delete();
+
+        clear_cache();
+
+        return redirect()->route('users.get_post')->with([
+            'message' => 'Post deleted successfully',
+            'alert-type' => 'success',
+        ]);
+
     }
 
     public function destroy_post_media($media_id)
     {
-        $media = PostMedia::whereId($media_id)->first();
-        if ($media) {
-            if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                unlink('storage/assets/posts/' . $media->file_name);
-            }
-            $media->delete();
-            clear_cache();
-            return true;
+        $media = PostMedia::whereId($media_id)->firstOrFail();
+
+        if (File::exists('storage/assets/posts/' . $media->file_name)) {
+            unlink('storage/assets/posts/' . $media->file_name);
         }
-        return false;
+
+        $media->delete();
+
+        clear_cache();
+
+        return true;
     }
 
     public function show_comments(Request $request)
     {
-
         $comments = Comment::query();
 
         if (isset($request->post) && $request->post != '') {
@@ -325,83 +274,51 @@ class UserController extends Controller
     {
         $comment = Comment::whereId($comment_id)->whereHas('post', function ($query) {
             $query->where('posts.user_id', auth()->id());
-        })->first();
+        })->firstOrFail();
 
-        if ($comment) {
-            return view('frontend.users.edit_comment', compact('comment'));
-        } else {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
-        }
-
+        return view('frontend.users.edit_comment', compact('comment'));
     }
 
     public function update_comment(Request $request, $comment_id)
     {
         $validator = Validator::make($request->all(), [
-//            'name'          => 'required',
-//            'email'         => 'required|email',
-//            'url'           => 'nullable|url',
             'status' => 'required',
-//            'comment'       => 'required',
         ]);
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $comment = Comment::whereId($comment_id)->whereHas('post', function ($query) {
             $query->where('posts.user_id', auth()->id());
-        })->first();
+        })->firstOrFail();
 
-        if ($comment) {
-//            $data['name']          = $request->name;
-//            $data['email']         = $request->email;
-//            $data['url']           = $request->url != '' ? $request->url : null;
-            $data['status'] = $request->status;
-//            $data['comment']       = Purify::clean($request->comment);
+        $comment->update(['status' => $request->status]);
 
-            $comment->update($data);
+        clear_cache();
 
-            clear_cache();
-
-            return redirect()->route('users.show_comments')->with([
-                'message' => 'Comment activated successfully',
-                'alert-type' => 'success',
-            ]);
-
-        } else {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
-        }
-
+        return redirect()->route('users.show_comments')->with([
+            'message' => 'Comment activated successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     public function destroy_comment($comment_id)
     {
+        $this->authorize('delete-comment');
+
         $comment = Comment::whereId($comment_id)->whereHas('post', function ($query) {
             $query->where('posts.user_id', auth()->id());
-        })->first();
+        })->firstOrFail();
 
-        if ($comment) {
-            $comment->delete();
+        $comment->delete();
 
-            clear_cache();
+        clear_cache();
 
-            return redirect()->back()->with([
-                'message' => 'Comment deleted successfully',
-                'alert-type' => 'success',
-            ]);
-
-        } else {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
-        }
+        return redirect()->back()->with([
+            'message' => 'Comment deleted successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
 }
