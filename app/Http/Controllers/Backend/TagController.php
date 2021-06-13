@@ -19,7 +19,6 @@ class TagController extends Controller
         $tags = $this->filter($query);
 
         return view('backend.post_tags.index', compact('tags'));
-
     }
 
     public function create()

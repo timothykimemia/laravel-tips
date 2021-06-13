@@ -14,35 +14,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="002c99af-ee21-40bb-a13a-e170afd8d80c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/CategoryController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PagesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/PageController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostCategoriesController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostCommentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/CommentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostTagsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/TagController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/SupervisorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/SupervisorsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/UsersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Frontend/PostController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Frontend/PostController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Frontend/UsersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Frontend/UsersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_categories/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_categories/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_categories/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_categories/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_categories/filter/filter.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_categories/filter/filter.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_categories/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_categories/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_comments/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_comments/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_comments/filter/filter.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_comments/filter/filter.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_comments/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_comments/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_tags/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_tags/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_tags/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_tags/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_tags/filter/filter.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_tags/filter/filter.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/post_tags/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/post_tags/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/posts/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/posts/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/posts/show.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/posts/show.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/users/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/users/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/users/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/users/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/users/show.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/users/show.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/partial/backend/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/partial/backend/sidebar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/StoreUserRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/StoreUserRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/UpdageUserRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/UpdageUserRequest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -336,7 +311,8 @@
       <workItem from="1623436151795" duration="14983000" />
       <workItem from="1623481050204" duration="8651000" />
       <workItem from="1623492535975" duration="4552000" />
-      <workItem from="1623510171728" duration="20717000" />
+      <workItem from="1623510171728" duration="20916000" />
+      <workItem from="1623562497854" duration="2642000" />
     </task>
     <servers />
   </component>
