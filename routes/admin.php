@@ -23,6 +23,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::any('/notifications/read',           [BackendNotificationsController::class, 'markAsRead']);
 
         Route::view('/',                             'backend.index')->name('index');
+        Route::view('/profile',                             'backend.admin.profile')->name('profile');
         Route::post('/posts/removeImage/{media_id}',[PostsController::class, 'removeImage'])->name('posts.media.destroy');
         Route::resource('posts',                    PostsController::class);
         Route::post('/pages/removeImage/{media_id}',[PageController::class, 'removeImage'])->name('pages.media.destroy');

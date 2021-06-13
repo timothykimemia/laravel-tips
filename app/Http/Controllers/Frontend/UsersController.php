@@ -39,30 +39,30 @@ class UsersController extends Controller
     public function update_info(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'          => 'required',
-            'email'         => 'required|email',
-            'mobile'        => 'nullable|numeric',
-            'bio'           => 'nullable|min:10',
+            'name' => 'required',
+            'email' => 'required|email',
+            'mobile' => 'nullable|numeric',
+            'bio' => 'nullable|min:10',
             'receive_email' => 'required',
-            'user_image'    => 'nullable|image|max:20000,mimes:jpeg,jpg,png'
+            'user_image' => 'nullable|image|max:20000,mimes:jpeg,jpg,png'
         ]);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $data['name']           = $request->name;
-        $data['email']          = $request->email;
-        $data['mobile']         = $request->mobile;
-        $data['bio']            = $request->bio;
-        $data['receive_email']  = $request->receive_email;
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['mobile'] = $request->mobile;
+        $data['bio'] = $request->bio;
+        $data['receive_email'] = $request->receive_email;
 
         if ($image = $request->file('user_image')) {
-            if (auth()->user()->user_image != ''){
-                if (File::exists('storage/assets/users/' . auth()->user()->user_image)){
+            if (auth()->user()->user_image != '') {
+                if (File::exists('storage/assets/users/' . auth()->user()->user_image)) {
                     unlink('storage/assets/users/' . auth()->user()->user_image);
                 }
             }
-            $filename = Str::slug(auth()->user()->username).'.'.$image->getClientOriginalExtension();
+            $filename = Str::slug(auth()->user()->username) . '.' . $image->getClientOriginalExtension();
             $path = public_path('storage/assets/users/' . $filename);
             Image::make($image->getRealPath())->resize(300, 300, function ($constraint) {
                 $constraint->aspectRatio();
@@ -71,56 +71,56 @@ class UsersController extends Controller
             $data['user_image'] = $filename;
         }
 
-        $update = auth()->user()->update($data);
+        auth()->user()->update($data);
 
-        if ($update) {
-            return redirect()->route('users.dashboard')->with([
+        if (auth()->user()->isAdmin()) {
+            return redirect()->route('admin.profile')->with([
                 'message' => 'Information updated successfully',
                 'alert-type' => 'success',
             ]);
-        } else {
-            return redirect()->back()->with([
-                'message' => 'Something was wrong',
-                'alert-type' => 'danger',
-            ]);
         }
+
+        return redirect()->route('users.dashboard')->with([
+            'message' => 'Information updated successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     public function update_password(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'current_password'  => 'required',
-            'password'          => 'required|confirmed'
+            'current_password' => 'required',
+            'password' => 'required|confirmed'
         ]);
-        if($validator->fails()) {
+
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $user = auth()->user();
-        if (Hash::check($request->current_password, $user->password)) {
-            $update = $user->update([
-                'password' => bcrypt($request->password),
-            ]);
-
-            if ($update) {
-                auth()->logout();
-                return redirect()->back()->with([
-                    'message' => 'Password updated successfully',
-                    'alert-type' => 'success',
-                ]);
-            } else {
-                return redirect()->back()->with([
-                    'message' => 'Something was wrong',
-                    'alert-type' => 'danger',
-                ]);
-            }
-
-        } else {
+        if (!Hash::check($request->current_password, auth()->user()->password)) {
             return redirect()->back()->with([
-                'message' => 'Something was wrong',
+                'message' => 'The password confirmation does not match!',
                 'alert-type' => 'danger',
             ]);
         }
+
+        auth()->user()->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+        if (auth()->user()->isAdmin()) {
+            return redirect()->route('admin.profile')->with([
+                'message' => 'Information updated successfully',
+                'alert-type' => 'success',
+            ]);
+        }
+
+        auth()->logout();
+
+        return redirect()->back()->with([
+            'message' => 'Password updated successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     public function create_post()
@@ -132,78 +132,70 @@ class UsersController extends Controller
 
     public function store_post(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'title'         => 'required',
-                'description'   => 'required|min:50',
-                'status'        => 'required',
-                'comment_able'  => 'required',
-                'category_id'   => 'required'
-            ]);
-            if($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $data['title']              = $request->title;
-            $data['description']        = Purify::clean($request->description);
-            $data['status']             = $request->status;
-            $data['comment_able']       = $request->comment_able;
-            $data['category_id']        = $request->category_id;
-
-            $post = auth()->user()->posts()->create($data);
-
-            if ($request->images && count($request->images) > 0) {
-                $i = 1;
-                foreach ($request->images as $file) {
-                    $filename = $post->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
-                    $file_size = $file->getSize();
-                    $file_type = $file->getMimeType();
-                    $path = storage_path('app/public/assets/posts/' . $filename);
-                    Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    })->save($path, 100);
-
-                    $post->media()->create([
-                        'file_name' => $filename,
-                        'file_size' => $file_size,
-                        'file_type' => $file_type,
-                    ]);
-                    $i++;
-                }
-            }
-
-            if (isset($request->tags)) {
-                if (count($request->tags) > 0) {
-                    $new_tags = [];
-                    foreach ($request->tags as $tag) {
-                        $tag = Tag::firstOrCreate([
-                            'id' => $tag
-                        ], [
-                            'name' => $tag
-                        ]);
-
-                        $new_tags[] = $tag->id;
-                    }
-                    $post->tags()->sync($new_tags);
-                }
-            }
-
-            if ($request->status == 1) {
-                clear_cache();
-            }
-
-            return redirect()->route('frontend.index')->with([
-                'message' => 'Post created successfully',
-                'alert-type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-
-            return redirect()->back()->with([
-//                'message' => 'Something was wrong',
-                'message' => $e->getMessage(),
-                'alert-type' => 'danger',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required|min:50',
+            'status' => 'required',
+            'comment_able' => 'required',
+            'category_id' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        $data['title'] = $request->title;
+        $data['description'] = Purify::clean($request->description);
+        $data['status'] = $request->status;
+        $data['comment_able'] = $request->comment_able;
+        $data['category_id'] = $request->category_id;
+
+        $post = auth()->user()->posts()->create($data);
+
+        if ($request->images && count($request->images) > 0) {
+            $i = 1;
+            foreach ($request->images as $file) {
+                $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
+                $file_size = $file->getSize();
+                $file_type = $file->getMimeType();
+                $path = storage_path('app/public/assets/posts/' . $filename);
+                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($path, 100);
+
+                $post->media()->create([
+                    'file_name' => $filename,
+                    'file_size' => $file_size,
+                    'file_type' => $file_type,
+                ]);
+                $i++;
+            }
+        }
+
+        if (isset($request->tags)) {
+            if (count($request->tags) > 0) {
+                $new_tags = [];
+                foreach ($request->tags as $tag) {
+                    $tag = Tag::firstOrCreate([
+                        'id' => $tag
+                    ], [
+                        'name' => $tag
+                    ]);
+
+                    $new_tags[] = $tag->id;
+                }
+                $post->tags()->sync($new_tags);
+            }
+        }
+
+        if ($request->status == 1) {
+            clear_cache();
+        }
+
+        return redirect()->route('frontend.index')->with([
+            'message' => 'Post created successfully',
+            'alert-type' => 'success',
+        ]);
+
     }
 
     public function edit_post($post_id)
@@ -224,31 +216,31 @@ class UsersController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'title'         => 'required',
-                'description'   => 'required|min:50',
-                'status'        => 'required',
-                'comment_able'  => 'required',
-                'category_id'   => 'required',
-                'tags.*'        => 'required',
+                'title' => 'required',
+                'description' => 'required|min:50',
+                'status' => 'required',
+                'comment_able' => 'required',
+                'category_id' => 'required',
+                'tags.*' => 'required',
             ]);
-            if($validator->fails()) {
+            if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->first();
 
             if ($post) {
-                $data['title']              = $request->title;
-                $data['description']        = Purify::clean($request->description);
-                $data['status']             = $request->status;
-                $data['comment_able']       = $request->comment_able;
-                $data['category_id']        = $request->category_id;
+                $data['title'] = $request->title;
+                $data['description'] = Purify::clean($request->description);
+                $data['status'] = $request->status;
+                $data['comment_able'] = $request->comment_able;
+                $data['category_id'] = $request->category_id;
 
                 $post->update($data);
 
                 if ($request->images && count($request->images) > 0) {
                     $i = 1;
                     foreach ($request->images as $file) {
-                        $filename = $post->slug.'-'.time().'-'.$i.'.'.$file->getClientOriginalExtension();
+                        $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
                         $file_size = $file->getSize();
                         $file_type = $file->getMimeType();
                         $path = storage_path('app/public/assets/posts/' . $filename);
@@ -331,7 +323,7 @@ class UsersController extends Controller
             if (File::exists('storage/assets/posts/' . $media->file_name)) {
                 unlink('storage/assets/posts/' . $media->file_name);
             }
-             $media->delete();
+            $media->delete();
             clear_cache();
             return true;
         }
@@ -378,10 +370,10 @@ class UsersController extends Controller
 //            'name'          => 'required',
 //            'email'         => 'required|email',
 //            'url'           => 'nullable|url',
-            'status'        => 'required',
+            'status' => 'required',
 //            'comment'       => 'required',
         ]);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -393,7 +385,7 @@ class UsersController extends Controller
 //            $data['name']          = $request->name;
 //            $data['email']         = $request->email;
 //            $data['url']           = $request->url != '' ? $request->url : null;
-            $data['status']        = $request->status;
+            $data['status'] = $request->status;
 //            $data['comment']       = Purify::clean($request->comment);
 
             $comment->update($data);

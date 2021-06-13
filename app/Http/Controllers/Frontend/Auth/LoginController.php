@@ -71,6 +71,13 @@ class LoginController extends Controller
                 ]);
             }
 
+            if (auth()->user()->isAdmin()) {
+                return redirect()->route('admin.index')->with([
+                    'message' => 'Logged in successfully.',
+                    'alert-type' => 'success',
+                ]);
+            }
+
             return redirect()->route('users.dashboard')->with([
                 'message' => 'Logged in successfully.',
                 'alert-type' => 'success'

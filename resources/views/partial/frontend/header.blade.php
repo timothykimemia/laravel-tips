@@ -54,7 +54,9 @@
                             {{ auth()->user()->name }} <span class="caret"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ auth()->user()->isAdmin() ? route('admin.index') : route('users.dashboard')}}">Dashboard</a>
+                            @admin<a class="dropdown-item" href="{{ route('admin.index') }}">Dashboard</a>@endadmin
+                            <a class="dropdown-item" href="{{ route('users.dashboard')}}">My Profile</a>
+
                             <a class="dropdown-item" href="{{ route('frontend.logout') }}"
                                onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
