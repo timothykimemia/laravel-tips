@@ -35,7 +35,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -78,7 +78,7 @@ class LoginController extends Controller
                 ]);
             }
 
-            return redirect()->route('users.dashboard')->with([
+            return redirect()->route('frontend.index')->with([
                 'message' => 'Logged in successfully.',
                 'alert-type' => 'success'
             ]);

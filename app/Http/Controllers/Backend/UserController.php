@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdageUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Traits\FilterTrait;
 use Carbon\Carbon;
@@ -83,19 +83,19 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(UpdageUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
         $this->authorize('edit-user');
 
-        if ($user_image = $request->file('user_image')) {
+        if ($avatar = $request->file('user_image')) {
             if ($user->user_image != '') {
                 if (File::exists('storage/assets/users/' . $user->user_image)) {
                     unlink('storage/assets/users/' . $user->user_image);
                 }
             }
-            $filename = Str::slug($request->username) . '.' . $user_image->getClientOriginalExtension();
+            $filename = Str::slug($request->username) . '.' . $avatar->getClientOriginalExtension();
             $path = storage_path('app/public/assets/users/' . $filename);
-            Image::make($user_image->getRealPath())->resize(300, 300, function ($constraint) {
+            Image::make($avatar->getRealPath())->resize(300, 300, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($path, 100);
         }

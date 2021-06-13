@@ -55,7 +55,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             @admin<a class="dropdown-item" href="{{ route('admin.index') }}">Dashboard</a>@endadmin
-                            <a class="dropdown-item" href="{{ route('users.dashboard')}}">My Profile</a>
+                            <a class="dropdown-item" href="{{ route('users.get_post')}}">My Profile</a>
 
                             <a class="dropdown-item" href="{{ route('frontend.logout') }}"
                                onclick="event.preventDefault();

@@ -37,20 +37,21 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/comments/{post_slug}',                  [CommentController::class, 'store'])->name('frontend.comments.store')->middleware('auth');
 
     Route::group(['middleware' => ['verified'], 'as' => 'users.'], function () {
-        Route::get('/dashboard',                     [UserController::class, 'index'])->name('dashboard');
         Route::any('/user/notifications/get',        [FrontendNotificationsController::class, 'getNotifications']);
         Route::any('/user/notifications/read',       [FrontendNotificationsController::class, 'markAsRead']);
         Route::any('/user/notifications/read/{id}',  [FrontendNotificationsController::class, 'markAsReadAndRedirect']);
-        Route::get('/edit-info',                     [UserController::class, 'edit_info'])->name('edit_info');
-        Route::post('/edit-info',                    [UserController::class, 'update_info'])->name('update_info');
-        Route::post('/edit-password',                [UserController::class, 'update_password'])->name('update_password');
+
+        Route::get('/user/my-post',                  [UserController::class, 'get_post'])->name('get_post');
+        Route::get('/user/edit-info',                [UserController::class, 'edit_info'])->name('edit_info');
+        Route::post('/user/edit-info',               [UserController::class, 'update_info'])->name('update_info');
+        Route::post('/user/edit-password',           [UserController::class, 'update_password'])->name('update_password');
+        Route::get('/user/show-comments',            [UserController::class, 'show_comments'])->name('show_comments');
         Route::get('/create-post',                   [UserController::class, 'create_post'])->name('post.create');
         Route::post('/create-post',                  [UserController::class, 'store_post'])->name('post.store');
         Route::get('/edit-post/{post_id}',           [UserController::class, 'edit_post'])->name('post.edit');
         Route::put('/edit-post/{post_id}',           [UserController::class, 'update_post'])->name('post.update');
         Route::delete('/delete-post/{post_id}',      [UserController::class, 'destroy_post'])->name('post.destroy');
         Route::post('/delete-post-media/{media_id}', [UserController::class, 'destroy_post_media'])->name('post.media.destroy');
-        Route::get('/user/show_comments',            [UserController::class, 'show_comments'])->name('comments');
         Route::get('/edit-comment/{comment_id}',     [UserController::class, 'edit_comment'])->name('comment.edit');
         Route::put('/edit-comment/{comment_id}',     [UserController::class, 'update_comment'])->name('comment.update');
         Route::delete('/delete-comment/{comment_id}',[UserController::class, 'destroy_comment'])->name('comment.destroy');

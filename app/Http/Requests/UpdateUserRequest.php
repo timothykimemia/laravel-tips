@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdageUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,7 +31,7 @@ class UpdageUserRequest extends FormRequest
             'mobile'   => ['nullable', 'numeric', Rule::unique('users')->ignore($this->user)],
             'status' => ['required', 'boolean'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'receive_email' => ['nullable', 'boolean']
+            'receive_email' => ['nullable', 'boolean'],
         ];
     }
 }

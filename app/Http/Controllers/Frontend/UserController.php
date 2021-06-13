@@ -3,25 +3,27 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateCurrentUserRequest;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostMedia;
 use App\Models\Tag;
+use App\Traits\AvatarUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
 class UserController extends Controller
 {
+    use AvatarUploadTrait;
 
-    public function index()
+    public function get_post()
     {
-        $posts = auth()->user()->posts()->with(['media', 'category', 'user'])
+        $posts = auth()->user()->posts()
             ->withCount('comments')
             ->orderBy('id', 'desc')
             ->paginate(10);
@@ -34,51 +36,25 @@ class UserController extends Controller
         return view('frontend.users.edit_info');
     }
 
-    public function update_info(Request $request)
+    public function update_info(UpdateCurrentUserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'mobile' => 'nullable|numeric',
-            'bio' => 'nullable|min:10',
-            'receive_email' => 'required',
-            'user_image' => 'nullable|image|max:20000,mimes:jpeg,jpg,png'
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        if ($avatar = $request->file('user_image')) {
+            $request->validate(['user_image' => ['image', 'max:20000', 'mimes:jpeg,jpg,png']]);
 
-        $data['name'] = $request->name;
-        $data['email'] = $request->email;
-        $data['mobile'] = $request->mobile;
-        $data['bio'] = $request->bio;
-        $data['receive_email'] = $request->receive_email;
-
-        if ($image = $request->file('user_image')) {
             if (auth()->user()->user_image != '') {
                 if (File::exists('storage/assets/users/' . auth()->user()->user_image)) {
                     unlink('storage/assets/users/' . auth()->user()->user_image);
                 }
             }
-            $filename = Str::slug(auth()->user()->username) . '.' . $image->getClientOriginalExtension();
-            $path = public_path('storage/assets/users/' . $filename);
-            Image::make($image->getRealPath())->resize(300, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($path, 100);
 
-            $data['user_image'] = $filename;
+            $filename = $this->uploadAvatar($avatar);
         }
 
-        auth()->user()->update($data);
-
-        if (auth()->user()->isAdmin()) {
-            return redirect()->route('admin.profile')->with([
-                'message' => 'Information updated successfully',
-                'alert-type' => 'success',
+        auth()->user()->update($request->validated() + [
+                'user_image' => $filename ?? NULL
             ]);
-        }
 
-        return redirect()->route('users.dashboard')->with([
+        return redirect()->route('users.update_info')->with([
             'message' => 'Information updated successfully',
             'alert-type' => 'success',
         ]);
@@ -390,7 +366,7 @@ class UserController extends Controller
 
             clear_cache();
 
-            return redirect()->route('users.comments')->with([
+            return redirect()->route('users.show_comments')->with([
                 'message' => 'Comment activated successfully',
                 'alert-type' => 'success',
             ]);
