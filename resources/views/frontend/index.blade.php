@@ -14,7 +14,7 @@
                             @if($post->media->count() > 0)
                                 <img style="width: 350px;" src="{{ asset('storage/assets/posts/' . $post->media->first()->file_name) }}" alt="{{ $post->title }}">
                             @else
-                                <img src="{{ asset('frontend/images/default.jpg') }}" alt="blog images">
+                                <img src="{{ asset('frontend/images/default.png') }}" alt="blog images">
                             @endif
                         </a>
                     </div>

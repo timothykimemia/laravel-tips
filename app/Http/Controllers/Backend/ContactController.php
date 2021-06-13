@@ -28,6 +28,7 @@ class ContactController extends Controller
             $contact->status = 1;
             $contact->save();
         }
+
         return view('backend.contact_us.show', compact('contact'));
     }
 

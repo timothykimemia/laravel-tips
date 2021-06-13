@@ -5,7 +5,7 @@
                 @if(auth()->user()->user_image)
                     <img class="avatar-round" src="{{ asset('storage/assets/users/' . auth()->user()->user_image) }}" alt="{{ auth()->user()->name }}">
                 @else
-                    <img src="{{ asset('frontend/images/sm_default.jpg') }}" alt="{{ auth()->user()->name }}">
+                    <img src="{{ asset('frontend/images/default_avatar.png') }}" alt="{{ auth()->user()->name }}">
                 @endif
             </li>
 

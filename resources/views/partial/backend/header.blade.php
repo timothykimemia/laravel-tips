@@ -36,7 +36,7 @@
                 @if (auth()->user()->user_image != '')
                     <img class="img-profile rounded-circle" src="{{ asset('storage/assets/users/' . auth()->user()->user_image) }}">
                 @else
-                    <img class="img-profile rounded-circle" src="{{ asset('frontend/images/default.jpg') }}">
+                    <img class="img-profile rounded-circle" src="{{ asset('frontend/images/default.png') }}">
                 @endif
             </a>
             <!-- Dropdown - User Information -->

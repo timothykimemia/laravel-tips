@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-    <div class="container">
+    <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('frontend.index') }}">
             {{ config('app.name', 'Laravel') }}
         </a>
@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <!-- Left Side Of Navbar -->
-            <ul class="navbar-nav mr-auto nav justify-content-center">
+            <ul class="mr-auto nav justify-content-center">
                 <li class="nav-link"><a href="{{ route('users.post.create') }}">Create Post</a></li>
                 <li class="nav-link"><a href="{{ route('frontend.posts.show', 'about-us') }}">About Us</a></li>
                 <li class="nav-link"><a href="{{ route('frontend.posts.show', 'our-vision') }}">Our Vision</a></li>

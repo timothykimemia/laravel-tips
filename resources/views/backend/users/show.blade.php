@@ -21,7 +21,7 @@
                             @if ($user->user_image != '')
                                 <img src="{{ asset('storage/assets/users/' . $user->user_image) }}" class="img-fluid">
                             @else
-                                <img src="{{ asset('frontend/images/sm_default.jpg') }}" class="img-fluid">
+                                <img src="{{ asset('frontend/images/default_avatar.png') }}" class="img-fluid">
                             @endif
                         </td>
                     </tr>

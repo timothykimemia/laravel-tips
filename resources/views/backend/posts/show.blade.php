@@ -47,7 +47,7 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    <img src="{{ asset('frontend/images/default.jpg') }}" alt="{{ $post->title }}">
+                                    <img src="{{ asset('frontend/images/default.png') }}" alt="{{ $post->title }}">
                                 @endif
 
                             </div>

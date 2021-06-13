@@ -20,7 +20,6 @@ class CommentController extends Controller
 
         $posts = Post::wherePostType('post')->pluck('title', 'id');
         return view('backend.post_comments.index', compact('comments', 'posts'));
-
     }
 
     public function edit(Comment $comment)
@@ -35,6 +34,7 @@ class CommentController extends Controller
             ]);
 
         clear_cache();
+
         return redirect()->route('admin.comments.index')->with([
             'message' => 'Comment updated successfully',
             'alert-type' => 'success',

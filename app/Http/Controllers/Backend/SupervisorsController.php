@@ -51,6 +51,7 @@ class SupervisorsController extends Controller
             'password'      => 'required|min:8',
             'permissions.*' => 'required'
         ]);
+
         if($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }

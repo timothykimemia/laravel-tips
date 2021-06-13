@@ -10,7 +10,6 @@ use App\Models\PostMedia;
 use App\Traits\FilterTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
@@ -80,6 +79,7 @@ class PageController extends Controller
         $this->authorize('view-page');
 
         $page = Post::with(['media'])->whereId($id)->wherePostType('page')->first();
+
         return view('backend.pages.show', compact('page'));
     }
 
@@ -93,7 +93,7 @@ class PageController extends Controller
         return view('backend.pages.edit', compact('categories', 'page'));
     }
 
-        public function update(StorePageRequest $request, $id)
+    public function update(StorePageRequest $request, $id)
     {
         $this->authorize('edit-page');
 
@@ -136,27 +136,20 @@ class PageController extends Controller
 
         $page = Post::whereId($id)->wherePostType('page')->first();
 
-        if ($page) {
-            if ($page->media->count() > 0) {
-                foreach ($page->media as $media) {
-                    if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                        unlink('storage/assets/posts/' . $media->file_name);
-                    }
+        if ($page->media->count() > 0) {
+            foreach ($page->media as $media) {
+                if (File::exists('storage/assets/posts/' . $media->file_name)) {
+                    unlink('storage/assets/posts/' . $media->file_name);
                 }
             }
-            $page->delete();
-
-            clear_cache();
-
-            return redirect()->route('admin.pages.index')->with([
-                'message' => 'Page deleted successfully',
-                'alert-type' => 'success',
-            ]);
         }
+        $page->delete();
+
+        clear_cache();
 
         return redirect()->route('admin.pages.index')->with([
-            'message' => 'Something was wrong',
-            'alert-type' => 'danger',
+            'message' => 'Page deleted successfully',
+            'alert-type' => 'success',
         ]);
     }
 
@@ -172,6 +165,7 @@ class PageController extends Controller
             $media->delete();
 
             clear_cache();
+
             return true;
         }
         return false;

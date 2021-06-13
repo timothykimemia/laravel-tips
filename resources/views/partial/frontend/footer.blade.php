@@ -1,5 +1,5 @@
 <!-- Footer Area -->
-<footer id="wn__footer" class="footer__area bg__cat--8 brown--color">
+<footer id="wn__footer" class="footer__area bg__cat--8 bg-dark">
     <div class="footer-static-top">
         <div class="container">
             <div class="row">
@@ -13,16 +13,17 @@
                         </div>
                         <div class="footer__content">
                             <ul class="social__net social__net--2 d-flex justify-content-center">
-                                <li><a href="https://www.facebook.com/alila3883"><i class="bi bi-facebook"></i></a></li>
-{{--                                <li><a href="#"><i class="bi bi-google"></i></a></li>--}}
+                                <li><a href="#"><i class="bi bi-facebook"></i></a></li>
+                                <li><a href="#"><i class="bi bi-google"></i></a></li>
                                 <li><a href="https://twitter.com/Aalhbbash"><i class="bi bi-twitter"></i></a></li>
                                 <li><a href="https://www.linkedin.com/in/ali-alqahtani-8b5527171/"><i class="bi bi-linkedin"></i></a></li>
-{{--                                <li><a href="#"><i class="bi bi-youtube"></i></a></li>--}}
+                                <li><a href="#"><i class="bi bi-youtube"></i></a></li>
                             </ul>
                             <ul class="mainmenu d-flex justify-content-center">
                                 <li><a href="{{ route('frontend.index') }}">Home</a></li>
-                                <li><a href="{{ route('frontend.index') }}">Trending</a></li>
-                                <li><a href="{{ route('frontend.index') }}">All Post</a></li>
+                                <li><a href="{{ route('frontend.posts.show', 'about-us') }}">About us</a></li>
+                                <li><a href="{{ route('frontend.posts.show', 'our-vision') }}">Our vision</a></li>
+                                <li><a href="{{ route('frontend.contacts.create') }}">Contact</a></li>
                                 <li><a href="{{ route('frontend.contacts.create') }}">Contact</a></li>
                             </ul>
                         </div>
@@ -37,7 +38,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <div class="copyright">
                         <div class="copy__right__inner text-center">
-                            <p>Copyright <i class="fa fa-copyright"></i> <a style="color: rgb(239 27 27);" href="https://alijumaan.com/">alijumaan.com</a> All Rights Reserved</p>
+                            <p>Copyright <i class="fa fa-copyright"></i> <a style="color: rgb(1 4 3);" href="https://alijumaan.com/">alijumaan.com</a> All Rights Reserved</p>
                         </div>
                     </div>
                 </div>

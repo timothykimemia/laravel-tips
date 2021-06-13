@@ -51,7 +51,7 @@
                     <img src="{{ asset('storage/assets/users/' . auth()->user()->user_image) }}" class="img-fluid" width="150" alt="{{ auth()->user()->name }}">
                 </div>
             @else
-                <img src="{{ asset('frontend/images/sm_default.jpg') }}" class="img-fluid" width="150" alt="{{ auth()->user()->name }}">
+                <img src="{{ asset('frontend/images/default_avatar.png') }}" class="img-fluid" width="150" alt="{{ auth()->user()->name }}">
             @endif
             <div class="col-12">
                 <div class="form-group">

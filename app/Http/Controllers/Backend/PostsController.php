@@ -9,16 +9,15 @@ use App\Models\Post;
 use App\Models\PostMedia;
 use App\Models\Tag;
 use App\Traits\FilterTrait;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
 class PostsController extends Controller
 {
-    use FilterTrait;
+    use FilterTrait, ImageUploadTrait;
 
     public function index()
     {
@@ -51,23 +50,7 @@ class PostsController extends Controller
             ]);
 
         if ($request->images && count($request->images) > 0) {
-            $i = 1;
-            foreach ($request->images as $file) {
-                $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                $file_size = $file->getSize();
-                $file_type = $file->getMimeType();
-                $path = storage_path('app/public/assets/posts/' . $filename);
-                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
-
-                $post->media()->create([
-                    'file_name' => $filename,
-                    'file_size' => $file_size,
-                    'file_type' => $file_type,
-                ]);
-                $i++;
-            }
+            $this->uploadImage($request->images, $post->slug, $post);
         }
 
         if (count($request->tags) > 0) {
@@ -81,6 +64,7 @@ class PostsController extends Controller
 
                 $new_tags[] = $tag->id;
             }
+
             $post->tags()->sync($new_tags);
         }
 
@@ -123,23 +107,7 @@ class PostsController extends Controller
             ]);
 
         if ($request->images && count($request->images) > 0) {
-            $i = 1;
-            foreach ($request->images as $file) {
-                $filename = $post->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                $file_size = $file->getSize();
-                $file_type = $file->getMimeType();
-                $path = storage_path('app/public/assets/posts/' . $filename);
-                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
-
-                $post->media()->create([
-                    'file_name' => $filename,
-                    'file_size' => $file_size,
-                    'file_type' => $file_type,
-                ]);
-                $i++;
-            }
+            $this->uploadImage($request->images, $post->slug, $post);
         }
 
         if (count($request->tags) > 0) {
@@ -202,5 +170,4 @@ class PostsController extends Controller
 
         return true;
     }
-
 }

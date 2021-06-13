@@ -38,7 +38,7 @@
             @include('partial.frontend.header')
             <main>
                 <div class="page-blog-details section-padding--lg bg--cream">
-                    <div class="container-fluid">
+                    <div class="container">
                         <div class="row">
                             <div class="col-12">
                                 @include('partial.flash')

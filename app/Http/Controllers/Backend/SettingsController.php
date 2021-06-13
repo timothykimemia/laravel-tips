@@ -18,7 +18,6 @@ class SettingsController extends Controller
         $settings = Setting::whereSection($section)->get();
 
         return view('backend.settings.index', compact('section', 'settings_sections', 'settings'));
-
     }
 
     public function update(Request $request, $id)

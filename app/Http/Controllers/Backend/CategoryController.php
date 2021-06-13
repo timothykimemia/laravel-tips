@@ -18,7 +18,6 @@ class CategoryController extends Controller
         $categories = $this->filter($query);
 
         return view('backend.post_categories.index', compact('categories'));
-
     }
 
     public function create()
@@ -36,7 +35,7 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories.index')->with([
             'message' => 'Category created successfully',
-            'alert-type' => 'success',
+            'alert-type' => 'success'
         ]);
     }
 

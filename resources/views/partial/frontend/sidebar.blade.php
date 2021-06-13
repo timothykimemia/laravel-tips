@@ -24,7 +24,7 @@
                                     @if($recent_post->media->count() > 0)
                                         <img src="{{ asset('storage/assets/posts/' . $recent_post->media->first()->file_name) }}" alt="{{ $recent_post->title }}">
                                     @else
-                                        <img src="{{ asset('frontend/images/sm_default.jpg') }}" alt="blog images">
+                                        <img src="{{ asset('frontend/images/default_avatar.png') }}" alt="blog images">
                                     @endif
                                 </a>
                             </div>
