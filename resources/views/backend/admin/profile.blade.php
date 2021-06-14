@@ -3,6 +3,16 @@
 
     <div class="table-responsive">
         <div class="col-lg-9 col-12">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <h3>Update Information</h3>
             {!! Form::open(['route' => 'users.update_info', 'name' => 'user_info', 'id' => 'user_info', 'method' => 'post', 'files' => true]) !!}
             <div class="row">

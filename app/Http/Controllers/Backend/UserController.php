@@ -88,6 +88,8 @@ class UserController extends Controller
         $this->authorize('edit-user');
 
         if ($avatar = $request->file('user_image')) {
+            $request->validate(['user_image' => ['image', 'max:20000', 'mimes:jpeg,jpg,png']]);
+
             if ($user->user_image != '') {
                 if (File::exists('storage/assets/users/' . $user->user_image)) {
                     unlink('storage/assets/users/' . $user->user_image);
@@ -101,11 +103,12 @@ class UserController extends Controller
         }
 
         if (trim($request->password) != '') {
-            $password = bcrypt($request->password);
+            $user->update([
+                'password' =>  bcrypt($request->password)
+            ]);
         }
 
         $user->update($request->validated() + [
-                'password' => $password ?? $user->password,
                 'user_image' => $filename ?? NULL,
             ]);
 

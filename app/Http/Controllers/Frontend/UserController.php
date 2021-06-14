@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdateCurrentUserRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
@@ -14,7 +16,6 @@ use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
 
 class UserController extends Controller
@@ -60,17 +61,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function update_password(Request $request)
+    public function update_password(UpdatePasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'current_password' => 'required',
-            'password' => 'required|confirmed'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
         if (!Hash::check($request->current_password, auth()->user()->password)) {
             return redirect()->back()->with([
                 'message' => 'The password confirmation does not match!',
@@ -81,13 +73,6 @@ class UserController extends Controller
         auth()->user()->update([
             'password' => bcrypt($request->password),
         ]);
-
-        if (auth()->user()->isAdmin()) {
-            return redirect()->route('admin.profile')->with([
-                'message' => 'Information updated successfully',
-                'alert-type' => 'success',
-            ]);
-        }
 
         auth()->logout();
 
@@ -105,28 +90,16 @@ class UserController extends Controller
         return view('frontend.users.create_post', compact('categories', 'tags'));
     }
 
-    public function store_post(Request $request)
+    public function store_post(StorePostRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required|min:50',
-            'status' => 'required',
-            'comment_able' => 'required',
-            'category_id' => 'required'
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        $request->validate(['description' => ['required', 'min:50']]);
 
-        $data['title'] = $request->title;
-        $data['description'] = Purify::clean($request->description);
-        $data['status'] = $request->status;
-        $data['comment_able'] = $request->comment_able;
-        $data['category_id'] = $request->category_id;
-
-        $post = auth()->user()->posts()->create($data);
+        $post = auth()->user()->posts()->create($request->validated() + [
+                'description' => Purify::clean($request->description)
+            ]);
 
         if ($request->images && count($request->images) > 0) {
+            $request->validate(['images.*' => ['image', 'max:20000', 'mimes:jpeg,jpg,png,gif']]);
             $this->uploadImage($request->images, $post->slug, $post);
         }
 
@@ -157,43 +130,26 @@ class UserController extends Controller
     {
         $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->firstOrFail();
 
-        if ($post) {
-            $tags = Tag::pluck('name', 'id');
-            $categories = Category::whereStatus(1)->pluck('name', 'id');
-            return view('frontend.users.edit_post', compact('post', 'categories', 'tags'));
-        }
+        $tags = Tag::pluck('name', 'id');
+        $categories = Category::whereStatus(1)->pluck('name', 'id');
 
-        return redirect()->route('frontend.index');
+        return view('frontend.users.edit_post', compact('post', 'categories', 'tags'));
     }
 
-    public function update_post(Request $request, $post_id)
+    public function update_post(StorePostRequest $request, $post_id)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required|min:50',
-            'status' => 'required',
-            'comment_able' => 'required',
-            'category_id' => 'required',
-            'tags.*' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        $request->validate(['description' => ['required', 'min:50']]);
 
         $post = Post::whereSlug($post_id)->orWhere('id', $post_id)->whereUserId(auth()->id())->firstOrFail();
 
-        $data['title'] = $request->title;
-        $data['description'] = Purify::clean($request->description);
-        $data['status'] = $request->status;
-        $data['comment_able'] = $request->comment_able;
-        $data['category_id'] = $request->category_id;
-
-        $post->update($data);
-
         if ($request->images && count($request->images) > 0) {
+            $request->validate(['images.*' => ['image', 'max:20000', 'mimes:jpeg,jpg,png,gif']]);
             $this->uploadImage($request->images, $post->slug, $post);
         }
+
+        $post->update($request->validated() + [
+                'description' => Purify::clean($request->description)
+        ]);
 
         if (count($request->tags) > 0) {
             $new_tags = [];
@@ -264,8 +220,7 @@ class UserController extends Controller
             $posts_id = auth()->user()->posts->pluck('id')->toArray();
             $comments = $comments->whereIn('post_id', $posts_id);
         }
-        $comments = $comments->orderBy('id', 'desc');
-        $comments = $comments->paginate(10);
+        $comments = $comments->orderBy('id', 'desc')->paginate(10);
 
         return view('frontend.users.comments', compact('comments'));
     }
@@ -281,13 +236,7 @@ class UserController extends Controller
 
     public function update_comment(Request $request, $comment_id)
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        $request->validate(['status' => 'required']);
 
         $comment = Comment::whereId($comment_id)->whereHas('post', function ($query) {
             $query->where('posts.user_id', auth()->id());

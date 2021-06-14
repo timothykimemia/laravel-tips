@@ -101,14 +101,13 @@ class PostsController extends Controller
 
         $post = Post::whereId($post->id)->wherePostType('post')->first();
 
-        $post->update($request->validated() + [
-                'slug' => null,
-                'description' => Purify::clean($request->description)
-            ]);
-
         if ($request->images && count($request->images) > 0) {
             $this->uploadImage($request->images, $post->slug, $post);
         }
+
+        $post->update($request->validated() + [
+                'description' => Purify::clean($request->description)
+        ]);
 
         if (count($request->tags) > 0) {
             $new_tags = [];
