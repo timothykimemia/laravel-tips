@@ -43,9 +43,7 @@ class UserController extends Controller
             $request->validate(['user_image' => ['image', 'max:20000', 'mimes:jpeg,jpg,png']]);
 
             if (auth()->user()->user_image != '') {
-                if (File::exists('storage/assets/users/' . auth()->user()->user_image)) {
-                    unlink('storage/assets/users/' . auth()->user()->user_image);
-                }
+                $this->unlinkAvatar(auth()->user()->user_image);
             }
 
             $filename = $this->uploadAvatar($avatar);
@@ -178,9 +176,7 @@ class UserController extends Controller
 
         if ($post->media->count() > 0) {
             foreach ($post->media as $media) {
-                if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                    unlink('storage/assets/posts/' . $media->file_name);
-                }
+                $this->unlinkImage($media->file_name);
             }
         }
 
@@ -199,9 +195,7 @@ class UserController extends Controller
     {
         $media = PostMedia::whereId($media_id)->firstOrFail();
 
-        if (File::exists('storage/assets/posts/' . $media->file_name)) {
-            unlink('storage/assets/posts/' . $media->file_name);
-        }
+        $this->unlinkImage($media->file_name);
 
         $media->delete();
 

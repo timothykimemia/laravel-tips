@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use App\Traits\FilterTrait;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\File;
 
 class CategoryController extends Controller
 {
-    use FilterTrait;
+    use FilterTrait, ImageUploadTrait;
 
     public function index()
     {
@@ -46,9 +47,7 @@ class CategoryController extends Controller
 
     public function update(StoreCategoryRequest $request, Category $category)
     {
-        $category->update($request->validated() + [
-                'slug' => null
-            ]);
+        $category->update($request->validated());
 
         clear_cache();
 
@@ -64,9 +63,7 @@ class CategoryController extends Controller
         foreach ($category->posts as $post) {
             if ($post->media->count() > 0) {
                 foreach ($post->media as $media) {
-                    if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                        unlink('storage/assets/posts/' . $media->file_name);
-                    }
+                    $this->unlinkImage($media->file_name);
                 }
             }
         }

@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\NotificationsController as BackendNotificationsController;
 use App\Http\Controllers\Backend\Auth\LoginController as BackendLoginController;
-use App\Http\Controllers\Backend\PostsController;
+use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\CommentController;
 use App\Http\Controllers\Backend\CategoryController;
@@ -24,8 +24,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
 
         Route::view('/',                             'backend.index')->name('index');
         Route::view('/profile',                             'backend.admin.profile')->name('profile');
-        Route::post('/posts/removeImage/{media_id}',[PostsController::class, 'removeImage'])->name('posts.media.destroy');
-        Route::resource('posts',                    PostsController::class);
+        Route::post('/posts/removeImage/{media_id}',[PostController::class, 'removeImage'])->name('posts.media.destroy');
+        Route::resource('posts',                    PostController::class);
         Route::post('/pages/removeImage/{media_id}',[PageController::class, 'removeImage'])->name('pages.media.destroy');
         Route::resource('pages',                    PageController::class);
         Route::resource('comments',            CommentController::class)->only('index', 'edit', 'update', 'destroy');

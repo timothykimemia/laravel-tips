@@ -2,18 +2,18 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 trait ImageUploadTrait
 {
-    protected $image_path  = "app/public/assets/posts";
+    protected $image_path = "app/public/assets/posts";
     protected $img_width = 800;
     protected $img_height = null;
 
     public function uploadImage($request_images, $post_slug, $post)
     {
         $i = 1;
-
         foreach ($request_images as $file) {
             $filename = $post_slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
             $file_size = $file->getSize();
@@ -30,6 +30,13 @@ trait ImageUploadTrait
             ]);
 
             $i++;
+        }
+    }
+
+    public function unlinkImage($file_name)
+    {
+        if (File::exists('storage/assets/posts/' . $file_name)) {
+            unlink('storage/assets/posts/' . $file_name);
         }
     }
 }

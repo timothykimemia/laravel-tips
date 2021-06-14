@@ -15,13 +15,8 @@
   <component name="ChangeListManager">
     <list default="true" id="002c99af-ee21-40bb-a13a-e170afd8d80c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/PostsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Backend/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Backend/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Frontend/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Frontend/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/StorePostRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/StorePostRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/backend/admin/profile.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/admin/profile.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/frontend/users/create_post.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/frontend/users/create_post.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/frontend/users/edit_comment.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/frontend/users/edit_comment.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/backend/supervisors/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/backend/supervisors/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/partial/backend/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/partial/backend/sidebar.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,7 +212,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Laravel-Ecommerce" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../mysite" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -320,7 +315,8 @@
       <workItem from="1623575128656" duration="9451000" />
       <workItem from="1623606504298" duration="7706000" />
       <workItem from="1623616851168" duration="1957000" />
-      <workItem from="1623679133901" duration="8423000" />
+      <workItem from="1623679133901" duration="9261000" />
+      <workItem from="1623696580573" duration="1233000" />
     </task>
     <servers />
   </component>

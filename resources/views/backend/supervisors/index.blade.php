@@ -33,9 +33,9 @@
                     <tr>
                         <td>
                             @if ($user->user_image != '')
-                                <img src="{{ asset('assets/users/' . $user->user_image) }}" width="60">
+                                <img src="{{ asset('storage/assets/users/' . $user->user_image) }}" width="60">
                             @else
-                                <img src="{{ asset('assets/users/default.png') }}" width="60">
+                                <img src="{{ asset('frontend/images/default_avatar.png') }}" width="60">
                             @endif
                         </td>
                         <td>

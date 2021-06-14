@@ -8,14 +8,14 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostMedia;
 use App\Traits\FilterTrait;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
 class PageController extends Controller
 {
-    use FilterTrait;
+    use FilterTrait, ImageUploadTrait;
 
     public function index()
     {
@@ -23,6 +23,7 @@ class PageController extends Controller
 
         $query = Post::wherePostType('page');
         $pages = $this->filter($query);
+
         $categories = Category::orderBy('id', 'desc')->pluck('name', 'id');
 
         return view('backend.pages.index', compact('categories', 'pages'));
@@ -49,23 +50,7 @@ class PageController extends Controller
             ]);
 
         if ($request->images && count($request->images) > 0) {
-            $i = 1;
-            foreach ($request->images as $file) {
-                $filename = $page->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                $file_size = $file->getSize();
-                $file_type = $file->getMimeType();
-                $path = storage_path('app/public/assets/posts/' . $filename);
-                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
-
-                $page->media()->create([
-                    'file_name' => $filename,
-                    'file_size' => $file_size,
-                    'file_type' => $file_type,
-                ]);
-                $i++;
-            }
+            $this->uploadImage($request->images, $page->slug, $page);
         }
 
         return redirect()->route('admin.pages.index')->with([
@@ -100,28 +85,11 @@ class PageController extends Controller
         $page = Post::whereId($id)->wherePostType('page')->first();
 
         $page->update($request->validated() + [
-                'slug' => null,
                 'description' => Purify::clean($request->description)
             ]);
 
         if ($request->images && count($request->images) > 0) {
-            $i = 1;
-            foreach ($request->images as $file) {
-                $filename = $page->slug . '-' . time() . '-' . $i . '.' . $file->getClientOriginalExtension();
-                $file_size = $file->getSize();
-                $file_type = $file->getMimeType();
-                $path = storage_path('app/public/assets/posts/' . $filename);
-                Image::make($file->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
-
-                $page->media()->create([
-                    'file_name' => $filename,
-                    'file_size' => $file_size,
-                    'file_type' => $file_type,
-                ]);
-                $i++;
-            }
+            $this->uploadImage($request->images, $page->slug, $page);
         }
 
         return redirect()->route('admin.pages.index')->with([
@@ -138,11 +106,10 @@ class PageController extends Controller
 
         if ($page->media->count() > 0) {
             foreach ($page->media as $media) {
-                if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                    unlink('storage/assets/posts/' . $media->file_name);
-                }
+                $this->unlinkImage($media->file_name);
             }
         }
+
         $page->delete();
 
         clear_cache();
@@ -158,16 +125,17 @@ class PageController extends Controller
         $this->authorize('delete-page');
 
         $media = PostMedia::whereId($request->media_id)->first();
+
         if ($media) {
-            if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                unlink('storage/assets/posts/' . $media->file_name);
-            }
+            $this->unlinkImage($media->file_name);
+
             $media->delete();
 
             clear_cache();
 
             return true;
         }
+
         return false;
     }
 }

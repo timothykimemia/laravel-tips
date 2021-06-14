@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -26,5 +27,12 @@ trait AvatarUploadTrait
     public function avatarName($avatar)
     {
         return Str::slug(auth()->user()->username) . '.' . $avatar->getClientOriginalExtension();
+    }
+
+    public function unlinkAvatar($user_image)
+    {
+        if (File::exists('storage/assets/users/' . $user_image)) {
+            unlink('storage/assets/users/' . $user_image);
+        }
     }
 }

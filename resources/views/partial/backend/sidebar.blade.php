@@ -10,7 +10,6 @@
     <hr class="sidebar-divider my-0">
 
     @admin
-
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('admin.index') }}">
             <i class="fa fa-home"></i>
@@ -42,7 +41,7 @@
            href="#" data-toggle="collapse" data-target="#collapse_posts"
            aria-expanded="true"
            aria-controls="collapse_posts">
-            <i class="fa fa-paper-plane"></i>
+            <i class="fa fa-newspaper"></i>
             <span>Posts</span>
         </a>
         <div class="collapse" id="collapse_posts" aria-labelledby="heading_posts" data-parent="#accordionSidebar">
@@ -78,7 +77,7 @@
            href="#" data-toggle="collapse" data-target="#collapse_contacts"
            aria-expanded="true"
            aria-controls="collapse_contacts">
-            <i class="fa fa-pager"></i>
+            <i class="far fa-envelope"></i>
             <span>Contacts</span>
         </a>
         <div class="collapse" id="collapse_contacts" aria-labelledby="heading_contacts" data-parent="#accordionSidebar">
@@ -94,7 +93,7 @@
            href="#" data-toggle="collapse" data-target="#collapse_users"
            aria-expanded="true"
            aria-controls="collapse_users">
-            <i class="fa fa-pager"></i>
+            <i class="fas fa-users"></i>
             <span>Users</span>
         </a>
         <div class="collapse" id="collapse_users" aria-labelledby="heading_users" data-parent="#accordionSidebar">
@@ -112,7 +111,7 @@
            href="#" data-toggle="collapse" data-target="#collapse_comments"
            aria-expanded="true"
            aria-controls="collapse_comments">
-            <i class="fa fa-pager"></i>
+            <i class="fas fa-comments"></i>
             <span>Comments</span>
         </a>
         <div class="collapse" id="collapse_comments" aria-labelledby="heading_comments" data-parent="#accordionSidebar">
@@ -128,7 +127,7 @@
            href="#" data-toggle="collapse" data-target="#collapse_tags"
            aria-expanded="true"
            aria-controls="collapse_tags">
-            <i class="fa fa-pager"></i>
+            <i class="fas fa-tags"></i>
             <span>Tags</span>
         </a>
         <div class="collapse" id="collapse_tags" aria-labelledby="heading_tags" data-parent="#accordionSidebar">
@@ -140,8 +139,6 @@
             </div>
         </div>
     </li>
-
-
 @endadmin
 
 <!-- Divider -->

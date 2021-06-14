@@ -19,6 +19,7 @@ class CommentController extends Controller
         $comments = $this->filter($query);
 
         $posts = Post::wherePostType('post')->pluck('title', 'id');
+
         return view('backend.post_comments.index', compact('comments', 'posts'));
     }
 

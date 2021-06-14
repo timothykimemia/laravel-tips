@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
 
-class PostsController extends Controller
+class PostController extends Controller
 {
     use FilterTrait, ImageUploadTrait;
 
@@ -137,9 +137,7 @@ class PostsController extends Controller
 
         if ($post->media->count() > 0) {
             foreach ($post->media as $media) {
-                if (File::exists('storage/assets/posts/' . $media->file_name)) {
-                    unlink('storage/assets/posts/' . $media->file_name);
-                }
+                $this->unlinkImage($media->file_name);
             }
         }
 
@@ -159,9 +157,7 @@ class PostsController extends Controller
 
         $media = PostMedia::whereId($request->media_id)->firstOrFail();
 
-        if (File::exists('storage/assets/posts/' . $media->file_name)) {
-            unlink('storage/assets/posts/' . $media->file_name);
-        }
+        $this->unlinkImage($media->file_name);
 
         $media->delete();
 

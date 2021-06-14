@@ -101,7 +101,7 @@
                 @if ($user->user_image != '')
                     <div class="col-12 text-center">
                         <div id="imgArea">
-                            <img src="{{ asset('assets/users/' . $user->user_image) }}" width="200" height="200">
+                            <img src="{{ asset('storage/assets/users/' . $user->user_image) }}" width="200" height="200">
                             <button class="btn btn-danger removeImage">Remove Image</button>
                         </div>
                     </div>

@@ -6,16 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Traits\AvatarUploadTrait;
 use App\Traits\FilterTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
-    use FilterTrait;
+    use FilterTrait, AvatarUploadTrait;
 
     public function index()
     {
@@ -41,11 +41,7 @@ class UserController extends Controller
         $this->authorize('add-user');
 
         if ($user_image = $request->file('user_image')) {
-            $filename = Str::slug($request->username) . '.' . $user_image->getClientOriginalExtension();
-            $path = storage_path('app/public/assets/users/' . $filename);
-            Image::make($user_image->getRealPath())->resize(300, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($path, 100);
+            $this->uploadAvatar($user_image);
         }
 
         User::create($request->validated() + [
@@ -73,14 +69,9 @@ class UserController extends Controller
     {
         $this->authorize('edit-user');
 
-        $user = User::whereId($id)->first();
-        if ($user) {
-            return view('backend.users.edit', compact('user'));
-        }
-        return redirect()->route('admin.users.index')->with([
-            'message' => 'Something was wrong',
-            'alert-type' => 'danger',
-        ]);
+        $user = User::whereId($id)->firstOrFail();
+
+        return view('backend.users.edit', compact('user'));
     }
 
     public function update(UpdateUserRequest $request, User $user)
@@ -91,20 +82,15 @@ class UserController extends Controller
             $request->validate(['user_image' => ['image', 'max:20000', 'mimes:jpeg,jpg,png']]);
 
             if ($user->user_image != '') {
-                if (File::exists('storage/assets/users/' . $user->user_image)) {
-                    unlink('storage/assets/users/' . $user->user_image);
-                }
+                $this->unlinkAvatar($user->user_image);
             }
-            $filename = Str::slug($request->username) . '.' . $avatar->getClientOriginalExtension();
-            $path = storage_path('app/public/assets/users/' . $filename);
-            Image::make($avatar->getRealPath())->resize(300, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($path, 100);
+
+            $this->uploadAvatar($avatar);
         }
 
         if (trim($request->password) != '') {
             $user->update([
-                'password' =>  bcrypt($request->password)
+                'password' => bcrypt($request->password)
             ]);
         }
 
@@ -124,10 +110,9 @@ class UserController extends Controller
         $this->authorize('delete-user');
 
         if ($user->user_image != '') {
-            if (File::exists('storage/assets/users/' . $user->user_image)) {
-                unlink('storage/assets/users/' . $user->user_image);
-            }
+            $this->unlinkAvatar($user->user_image);
         }
+
         $user->delete();
 
         clear_cache();
@@ -143,16 +128,16 @@ class UserController extends Controller
     {
         $this->authorize('delete-user');
 
-        $user = User::whereId($request->user_id)->first();
+        $user = User::whereId($request->user_id)->firstOrFail();
 
         if ($user) {
-            if (File::exists('storage/assets/users/' . $user->user_image)) {
-                unlink('storage/assets/users/' . $user->user_image);
-            }
+            $this->unlinkAvatar($user->user_image);
+
             $user->user_image = null;
             $user->save();
             return 'true';
         }
+
         return 'false';
     }
 }
